@@ -1,7 +1,6 @@
 function EMA(source,period)
-multiplier=(2 / (period + 1) ) 
---EMA: {Close - EMA(previous day)} x multiplier + EMA(previous day). 
-out={}
+local multiplier=(2 / (period + 1) ) 
+local out={}
   for  i=1,period-1,1 do
     out[i] = 0;
   end

@@ -1,5 +1,5 @@
 function ROC(source,period)
-out={}
+local out={}
   for  i=1,period,1 do
     out[i] = 0;
   end
