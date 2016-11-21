@@ -1,4 +1,4 @@
-function SMA(source,period)
+function SUM(source,period)
 local out={}
   for  i=1,period-1,1 do
     out[i] = 0;
@@ -8,10 +8,8 @@ local out={}
       for j=0,period-1,1 do
            sum = sum+source[i-j];
       end
-      out[i]=sum/period
+      out[i]=sum
   end
 return out
 end
-
-
 
