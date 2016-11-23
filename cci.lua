@@ -1,17 +1,16 @@
 --CCI = (Typical Price  -  n-period SMA of Typical Price) / (.015 x Mean Deviation)
+require "meandev"
+require "sma"
+
 function CCI(source,period)
+  
   local out={}
   for  i=1,period-1,1 do
-    out[i] = 0;
+      out[i] = 0;
   end  
 
-local meandev_lua = assert(loadfile("meandev.lua")) meandev_lua()
-local meandev={}
-meandev=MEANDEV(source,period)
-
-local sma_lua = assert(loadfile("sma.lua")) sma_lua()
-local sma={}
-sma=SMA(source,period)
+  local meandev=MEANDEV(source,period)
+  local sma=SMA(source,period)
   
   for  i=table.getn(source),period,-1 do
       out[i]=(source[i]-sma[i])/ (0.015*meandev[i])

@@ -1,7 +1,6 @@
+require "sma" 
 function MEANDEV(source,period)
-local SMA_lua = assert(loadfile("sma.lua")) SMA_lua()
-sma={}
-sma=SMA(source,period)
+local sma=SMA(source,period)
   
 local out={}
   for  i=1,period-1,1 do
