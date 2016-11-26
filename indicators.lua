@@ -196,3 +196,31 @@ local tr=TR(period)
   end 
 return out
 end
+
+function BEARS(source,period)
+    source =source or LOW
+    period = period or 13
+local out={}  
+    for  i=table.getn(source),period,-1 do
+      out[i]=source[i]-EMA(source,period)[i]
+    end
+return out    
+end
+
+function BULLS(source,period)
+    source =source or HIGH
+    period = period or 13
+local out={}  
+    for  i=table.getn(source),period,-1 do
+      out[i]=source[i]-EMA(source,period)[i]
+    end
+return out    
+end
+
+function AD()
+local out={}  
+    for  i=table.getn(CLOSE),1,-1 do
+      out[i]=((CLOSE[i] - LOW[i]) - (HIGH[i] - CLOSE[i]) * VOLUME[i] / (HIGH[i] - LOW[i])) + out[i-1]
+    end
+return out    
+end
