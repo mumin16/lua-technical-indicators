@@ -45,7 +45,7 @@ int OnCalculate(const int rates_total,
     
      for(int i=rates_total-1; i>=0; i--) 
      {
-      FileWrite(handle, close[i],time[i],",");
+      FileWrite(handle, close[i],",");
      } 
      
      FileClose(handle);
@@ -53,7 +53,12 @@ int OnCalculate(const int rates_total,
           
      for(int i=rates_total-1; i>=0; i--) 
      {
-      out[i]=iMA(NULL,0,14,0,MODE_SMA,PRICE_CLOSE,i);
+      //out[i]=iMA(NULL,0,10,0,MODE_SMA,PRICE_CLOSE,i);
+      // out[i]=iMA(NULL,0,10,0,MODE_EMA,PRICE_CLOSE,i);
+      //out[i]=iMA(NULL,0,10,0,MODE_LWMA,PRICE_CLOSE,i);
+      //out[i]=iMA(NULL,0,10,0,MODE_SMMA,PRICE_CLOSE,i);
+      
+      out[i]=iStdDev(NULL,0,10,0,MODE_SMA,PRICE_CLOSE,i);
       //out[i]=iAO(NULL,0,i);
       //out[i]=iAD(NULL,0,i);
       //out[i]=iADX(NULL,0,14,PRICE_CLOSE,MODE_PLUSDI,i);
@@ -66,7 +71,7 @@ int OnCalculate(const int rates_total,
     {
      for(int i=rates_total-1; i>=0; i--) 
      {
-      FileWrite(handle, i,out[i]);
+      FileWrite(handle, MathAbs(i-rates_total),out[i]);
      } 
      
      FileClose(handle);
