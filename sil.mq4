@@ -45,20 +45,52 @@ int OnCalculate(const int rates_total,
     
      for(int i=rates_total-1; i>=0; i--) 
      {
+     FileWrite(handle, open[i],",");
       FileWrite(handle, close[i],",");
      } 
      
      FileClose(handle);
     }
-          
+ 
+     handle=FileOpen("datalow.txt", FILE_TXT|FILE_WRITE);
+  if(handle>0)
+    {
+    
+     for(int i=rates_total-1; i>=0; i--) 
+     {
+      FileWrite(handle, low[i],",");
+     } 
+     
+     FileClose(handle);
+    }
+ 
+      handle=FileOpen("datahigh.txt", FILE_TXT|FILE_WRITE);
+  if(handle>0)
+    {
+    
+     for(int i=rates_total-1; i>=0; i--) 
+     {
+      FileWrite(handle, high[i],",");
+     } 
+     
+     FileClose(handle);
+    }            
      for(int i=rates_total-1; i>=0; i--) 
      {
       //out[i]=iMA(NULL,0,10,0,MODE_SMA,PRICE_CLOSE,i);
       // out[i]=iMA(NULL,0,10,0,MODE_EMA,PRICE_CLOSE,i);
       //out[i]=iMA(NULL,0,10,0,MODE_LWMA,PRICE_CLOSE,i);
       //out[i]=iMA(NULL,0,10,0,MODE_SMMA,PRICE_CLOSE,i);
+      //out[i]=iStdDev(NULL,0,10,0,MODE_SMA,PRICE_CLOSE,i);
+      //out[i]=iBands(NULL,0,10,2,0,PRICE_CLOSE,MODE_UPPER,i);
+      //out[i]=iBands(NULL,0,10,2,0,PRICE_CLOSE,MODE_LOWER,i);
+      //out[i]=iBearsPower(NULL,0,10,PRICE_CLOSE,i);;
+      //out[i]=iBullsPower(NULL,0,10,PRICE_CLOSE,i);
+      //out[i]=iMomentum(NULL,0,10,PRICE_CLOSE,i);
+      //out[i]=iDeMarker(NULL,0,10,i);
       
-      out[i]=iStdDev(NULL,0,10,0,MODE_SMA,PRICE_CLOSE,i);
+      out[i]=iForce(NULL,0,10,MODE_SMA,PRICE_CLOSE,i);
+      
       //out[i]=iAO(NULL,0,i);
       //out[i]=iAD(NULL,0,i);
       //out[i]=iADX(NULL,0,14,PRICE_CLOSE,MODE_PLUSDI,i);
