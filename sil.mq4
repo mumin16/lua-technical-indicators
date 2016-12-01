@@ -41,69 +41,22 @@ int OnCalculate(const int rates_total,
 
   
 
-    int handle=FileOpen("dataclose.txt", FILE_TXT|FILE_WRITE);
+    int handle=FileOpen("data.txt", FILE_TXT|FILE_WRITE);
   if(handle>0)
     {
     
      for(int i=rates_total-1; i>=0; i--) 
      {
-      FileWrite(handle, close[i],",");
+      FileWrite(handle,open[i], ",",high[i],",",low[i], ",",close[i], ",",tick_volume[i]);
      } 
      
      FileClose(handle);
     }
 
-handle=FileOpen("dataopen.txt", FILE_TXT|FILE_WRITE);
-  if(handle>0)
-    {
-    
-     for(int i=rates_total-1; i>=0; i--) 
-     {
-      FileWrite(handle, open[i],",");
-     } 
-     
-     FileClose(handle);
-    }
-    
-handle=FileOpen("datavol.txt", FILE_TXT|FILE_WRITE);
-  if(handle>0)
-    {
-    
-     for(int i=rates_total-1; i>=0; i--) 
-     {
-      FileWrite(handle, tick_volume[i],",");
-     } 
-     
-     FileClose(handle);
-    }
-     
-     handle=FileOpen("datalow.txt", FILE_TXT|FILE_WRITE);
-  if(handle>0)
-    {
-    
-     for(int i=rates_total-1; i>=0; i--) 
-     {
-      FileWrite(handle, low[i],",");
-     } 
-     
-     FileClose(handle);
-    }
- 
-      handle=FileOpen("datahigh.txt", FILE_TXT|FILE_WRITE);
-  if(handle>0)
-    {
-    
-     for(int i=rates_total-1; i>=0; i--) 
-     {
-      FileWrite(handle, high[i],",");
-     } 
-     
-     FileClose(handle);
-    }            
      for(int i=rates_total-1; i>=0; i--) 
      {
       //out[i]=iMA(NULL,0,10,0,MODE_SMA,PRICE_CLOSE,i);
-      // out[i]=iMA(NULL,0,10,0,MODE_EMA,PRICE_CLOSE,i);
+      //out[i]=iMA(NULL,0,10,0,MODE_EMA,PRICE_CLOSE,i);
       //out[i]=iMA(NULL,0,10,0,MODE_LWMA,PRICE_CLOSE,i);
       //out[i]=iMA(NULL,0,10,0,MODE_SMMA,PRICE_CLOSE,i);
       //out[i]=iStdDev(NULL,0,10,0,MODE_SMA,PRICE_CLOSE,i);
@@ -117,15 +70,19 @@ handle=FileOpen("datavol.txt", FILE_TXT|FILE_WRITE);
       //out[i]=iOBV(NULL,0,PRICE_CLOSE,i);
       //out[i]=iATR(NULL,0,10,i);
       //out[i]=iRVI(NULL,0,10,MODE_MAIN,i);
-      
-      
-      
-      //out[i]=iMFI(NULL,0,10,i);
-      
-      
       //out[i]=iAO(NULL,0,i);
-      //out[i]=iAD(NULL,0,i);
-      //out[i]=iADX(NULL,0,14,PRICE_CLOSE,MODE_PLUSDI,i);
+      //out[i]=iAD(NULL,0,i); 
+      //out[i]=iAC(NULL,0,i);;
+      //int val_index=iHighest(NULL,0,MODE_CLOSE,10,i);
+      //out[i]=close[val_index];
+      //int val_index=iLowest(NULL,0,MODE_CLOSE,10,i);
+      //out[i]=close[val_index];
+      //out[i]=iMFI(NULL,0,10,i);
+      //out[i]=iMACD(NULL,0,12,26,9,PRICE_CLOSE,MODE_MAIN,i);
+      //out[i]=iMACD(NULL,0,12,26,9,PRICE_CLOSE,MODE_SIGNAL,i);      
+      
+     
+      
       
       
      } 
