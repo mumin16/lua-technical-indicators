@@ -38,20 +38,45 @@ int OnCalculate(const int rates_total,
                 const int &spread[])
   {
 //---
-     
-    int handle=FileOpen("data.txt", FILE_TXT|FILE_WRITE);
+
+  
+
+    int handle=FileOpen("dataclose.txt", FILE_TXT|FILE_WRITE);
   if(handle>0)
     {
     
      for(int i=rates_total-1; i>=0; i--) 
      {
-     FileWrite(handle, open[i],",");
       FileWrite(handle, close[i],",");
      } 
      
      FileClose(handle);
     }
- 
+
+handle=FileOpen("dataopen.txt", FILE_TXT|FILE_WRITE);
+  if(handle>0)
+    {
+    
+     for(int i=rates_total-1; i>=0; i--) 
+     {
+      FileWrite(handle, open[i],",");
+     } 
+     
+     FileClose(handle);
+    }
+    
+handle=FileOpen("datavol.txt", FILE_TXT|FILE_WRITE);
+  if(handle>0)
+    {
+    
+     for(int i=rates_total-1; i>=0; i--) 
+     {
+      FileWrite(handle, tick_volume[i],",");
+     } 
+     
+     FileClose(handle);
+    }
+     
      handle=FileOpen("datalow.txt", FILE_TXT|FILE_WRITE);
   if(handle>0)
     {
@@ -88,8 +113,15 @@ int OnCalculate(const int rates_total,
       //out[i]=iBullsPower(NULL,0,10,PRICE_CLOSE,i);
       //out[i]=iMomentum(NULL,0,10,PRICE_CLOSE,i);
       //out[i]=iDeMarker(NULL,0,10,i);
+      //out[i]=iForce(NULL,0,10,MODE_SMA,PRICE_CLOSE,i);
+      //out[i]=iOBV(NULL,0,PRICE_CLOSE,i);
+      //out[i]=iATR(NULL,0,10,i);
+      //out[i]=iRVI(NULL,0,10,MODE_MAIN,i);
       
-      out[i]=iForce(NULL,0,10,MODE_SMA,PRICE_CLOSE,i);
+      
+      
+      //out[i]=iMFI(NULL,0,10,i);
+      
       
       //out[i]=iAO(NULL,0,i);
       //out[i]=iAD(NULL,0,i);
