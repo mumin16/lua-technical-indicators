@@ -81,6 +81,8 @@ int OnCalculate(const int rates_total,
       //out[i]=iMACD(NULL,0,12,26,9,PRICE_CLOSE,MODE_MAIN,i);
       //out[i]=iMACD(NULL,0,12,26,9,PRICE_CLOSE,MODE_SIGNAL,i);      
       
+      out[i]=iRSI(NULL,0,10,PRICE_CLOSE,i);
+      
      
       
       

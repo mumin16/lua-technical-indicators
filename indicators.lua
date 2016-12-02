@@ -261,6 +261,35 @@ local out={}
 return out
 end
 
+--Average Gain = [(previous Average Gain) x 13 + current Gain] / 14.
+--Average Loss = [(previous Average Loss) x 13 + current Loss] / 14.
+--Relative Strength Index
+function RSI(source,period)
+local g={}
+local l={}
+  for  i=2,#source,1 do
+      if source[i]>source[i-1] then g[i-1]=source[i]-source[i-1] l[i-1]=0  end
+      if source[i]<source[i-1] then l[i-1]=source[i-1]-source[i] g[i-1]=0  end
+      if source[i]==source[i-1] then l[i-1]=0 g[i-1]=0  end
+  end
+local ag={0}
+local al={0}  
+local out={}
+  for  j=1,period,1 do
+      ag[1]=ag[1]+g[j]
+      al[1]=al[1]+l[j]
+  end
+ag[1]=ag[1]/period
+al[1]=al[1]/period
+   
+   --avglerihesapla
+
+  for  k=1,#ag,1 do
+    out[k]=100-(100/(1+(ag[k]/al[k])))
+  end
+return out
+end
+
 --Relative Vigor Index
 function RVI(period)
 local MovAverage={}
@@ -339,7 +368,7 @@ MEDIAN=MEDIANPRICE()
 TYPICAL=TYPICALPRICE()
 WEIGHTED=WEIGHTEDCLOSE()
 
-for k, v in pairs(MACDSIGNAL(CLOSE,12,26,9)) do
+for k, v in pairs(RSI(CLOSE,10)) do
    print(k, v)
 end
 
