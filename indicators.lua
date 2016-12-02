@@ -219,24 +219,24 @@ local out=SMA(tr,period)
 return out
 end
 
---CCI = M/D
---D = TP — SMA(TP, N)
---M = SMA(D, N) * 0,015
+--Commodity Channel Index 
 function CCI(source,period)
-local D={}
 local sma=SMA(source,period)
-  for  j=1,#sma,1 do
-      D[j]=math.abs(source[j+period-1]-sma[j])
+
+local mean={}
+for  i=1,#sma,1 do  
+  local sum=0
+  for  j=period-1,0,-1 do
+    if i>#sma then break else  sum=sum+math.abs(source[i+j]-sma[i]) end
   end
-local M={}
-local smad=SMA(D,period)
-  for  k=1,#smad,1 do
-      M[k]=smad[k]*0.015
+   mean[i]=sum/period
+end
+
+local out={}
+  for k=1,#sma,1 do  
+   out[k]=(source[k+period-1]-sma[k])/(0.015*mean[k])
   end
-local out={}  
-  for  i=1,#smad,1 do
-      out[i]=M[i]/D[i+period-1]
-  end
+
 return out
 end
 
@@ -282,10 +282,13 @@ local out={}
 ag[1]=ag[1]/period
 al[1]=al[1]/period
    
-   --avglerihesapla
-
-  for  k=1,#ag,1 do
-    out[k]=100-(100/(1+(ag[k]/al[k])))
+  for  k=2,#g-period+1,1 do
+    ag[k]=(ag[k-1]*(period-1)+g[k+period-1])/period
+    al[k]=(al[k-1]*(period-1)+l[k+period-1])/period
+  end
+  
+  for  m=1,#ag,1 do
+    out[m]=100-(100/(1+(ag[m]/al[m])))
   end
 return out
 end
@@ -348,9 +351,11 @@ local out={}
   end
 return out
 end
+
 function MACDSIGNAL(source,fast,slow,signal)
-return SMA(MACD(source,fast,slow),signal)
+  return SMA(MACD(source,fast,slow),signal)
 end
+
 function write()
 
 local i=1
@@ -368,7 +373,7 @@ MEDIAN=MEDIANPRICE()
 TYPICAL=TYPICALPRICE()
 WEIGHTED=WEIGHTEDCLOSE()
 
-for k, v in pairs(RSI(CLOSE,10)) do
+for k, v in pairs(CCI(CLOSE,10)) do
    print(k, v)
 end
 
