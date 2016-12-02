@@ -82,7 +82,17 @@ int OnCalculate(const int rates_total,
       //out[i]=iMACD(NULL,0,12,26,9,PRICE_CLOSE,MODE_SIGNAL,i);      
       //out[i]=iRSI(NULL,0,10,PRICE_CLOSE,i);
       //out[i]=iCCI(NULL,0,10,PRICE_CLOSE,i);
-     
+      //out[i]=iEnvelopes(NULL,0,10,MODE_SMA,0,PRICE_CLOSE,0.2,MODE_UPPER,i);
+      //out[i]=iEnvelopes(NULL,0,10,MODE_SMA,0,PRICE_CLOSE,0.2,MODE_LOWER,i);
+      //out[i]=iWPR(NULL,0,10,i);
+      //out[i]=iOsMA(NULL,0,12,26,9,PRICE_CLOSE,i);
+      
+      out[i]=iADX(NULL,0,10,PRICE_CLOSE,MODE_MAIN,i);
+      //out[i]=iADX(NULL,0,10,PRICE_CLOSE,MODE_PLUSDI,i);
+      //out[i]=iADX(NULL,0,10,PRICE_CLOSE,MODE_MINUSDI,i);
+      
+      //out[i]=iStochastic(NULL,0,5,3,3,MODE_SMA,0,MODE_MAIN,i);
+      //out[i]=iStochastic(NULL,0,5,3,3,MODE_SMA,0,MODE_SIGNAL,i);
       
       
       

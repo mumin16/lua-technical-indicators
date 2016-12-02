@@ -261,8 +261,6 @@ local out={}
 return out
 end
 
---Average Gain = [(previous Average Gain) x 13 + current Gain] / 14.
---Average Loss = [(previous Average Loss) x 13 + current Loss] / 14.
 --Relative Strength Index
 function RSI(source,period)
 local g={}
@@ -356,6 +354,84 @@ function MACDSIGNAL(source,fast,slow,signal)
   return SMA(MACD(source,fast,slow),signal)
 end
 
+--Envelopes
+function ENVELOPESUPPER(source,period,deviation)
+local sma=SMA(source, period)
+local out={}
+  for  i=1,#sma,1 do
+    out[i]=(1+deviation/100.0)*sma[i];
+  end
+return out
+end
+
+function ENVELOPESLOWER(source,period,deviation)
+local sma=SMA(source, period)
+local out={}
+  for  i=1,#sma,1 do
+    out[i]=(1-deviation/100.0)*sma[i];
+  end
+return out
+end
+
+--Williams' Percent Range
+function WPR(period)
+local hh=HIGHEST(HIGH,period)
+local ll=LOWEST(LOW,period)
+local out={}
+  for  i=1,#hh-period+1,1 do
+    out[i]=(hh[i+period-1]-CLOSE[i+period-1])/(hh[i+period-1]-ll[i+period-1]) * -100
+  end
+return out
+end
+
+--Moving Average of Oscillator indicator 
+function OSMA(source,fast_ema_period,slow_ema_period,signal_period)
+local macd=MACD(source,fast_ema_period,slow_ema_period)
+local signal=MACDSIGNAL(source,fast_ema_period,slow_ema_period,signal_period)
+local out={}   
+  for  j=1,#macd-#signal,1 do
+    out[j]=macd[j]
+  end
+  for  i=1,#signal,1 do
+    out[i+#macd-#signal]=macd[i+signal_period-1]-signal[i] 
+  end
+return out
+end
+
+--%K = (CLOSE-LOW(%K))/(HIGH(%K)-LOW(%K))*100
+--%D = SMA(%K, N)
+function STOCHASTIC(Kperiod,Dperiod,slowing)
+local ll=LOWEST(LOW,Kperiod)
+local hh=HIGHEST(HIGH,Kperiod)
+local out={}
+  for  i=1,#hh-Kperiod-1,1 do
+    out[i]=(CLOSE[i+Kperiod-1]-ll[i+Kperiod-1])/(hh[i+Kperiod-1]-ll[i+Kperiod-1]) * 100
+  end
+return SMA(out, Dperiod)
+end
+
+function STOCHASTICSIGNAL(Kperiod,Dperiod,slowing)
+return SMA(STOCHASTIC(Kperiod,Dperiod,slowing),slowing)
+end
+
+--Average Directional Index
+--ADX = SUM[(+DI-(-DI))/(+DI+(-DI)), N]/N
+function ADX(source,period)
+local out={}
+return out
+end
+
+function PLUSDI(source,period)
+local out={}
+return out
+end
+
+function MINUSDI(source,period)
+local out={}
+return out
+end
+
+
 function write()
 
 local i=1
@@ -373,7 +449,7 @@ MEDIAN=MEDIANPRICE()
 TYPICAL=TYPICALPRICE()
 WEIGHTED=WEIGHTEDCLOSE()
 
-for k, v in pairs(CCI(CLOSE,10)) do
+for k, v in pairs(ADX(CLOSE,10)) do
    print(k, v)
 end
 
