@@ -59,17 +59,10 @@ int OnCalculate(const int rates_total,
   
   
   
-     indHandle= iTriX( 
-   NULL,
-   0,
-   10,  
-   PRICE_CLOSE
-   );
-  
-  
-  
-  
-  
+    // indHandle= iTriX(NULL, 0,  10,  PRICE_CLOSE );
+  // indHandle= iDEMA( NULL, 0,  10, 0, PRICE_CLOSE  );
+   //indHandle= iTEMA( NULL, 0,  10, 0, PRICE_CLOSE  );
+  //indHandle= iChaikin( NULL, 0,    3,   10,   MODE_EMA,  VOLUME_TICK   );
   
   
   

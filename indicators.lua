@@ -432,6 +432,49 @@ return out
 end
 
 
+--Triple Exponential Average
+function TRIX(source,period)
+local ema=EMA(EMA(EMA(source,period),period),period)
+local out={}
+  for  i=1,#ema,1 do
+    if i==1 then out[i]=0 else out[i]=(ema[i] - ema[i-1])/ ema[i-1] end
+  end
+return out
+end
+
+function DEMA(source,period)
+local ema=EMA(source,period)
+local emaofema=EMA(ema,period)
+local out={}
+  for  i=1,#emaofema,1 do
+    out[i]=2*ema[i]-emaofema[i]
+  end
+return out
+end
+
+function TEMA(source,period)
+local ema=EMA(source,period)
+local emaofema=EMA(ema,period)
+local emaofemaofema=EMA(emaofema,period)
+local out={}
+  for  i=1,#emaofemaofema,1 do
+    out[i]=3*ema[i]-3*emaofema[i]+emaofemaofema[i];
+  end
+return out
+end
+
+
+function CHAIKIN(fast,slow)
+local ad=AD()
+local fastad=EMA(ad,fast)
+local slowad=EMA(ad,slow)
+local out={}
+  for  i=1,#slowad,1 do
+    out[i]=fastad[i]-slowad[i]
+  end 
+return out
+end
+
 function write()
 
 local i=1
@@ -449,7 +492,7 @@ MEDIAN=MEDIANPRICE()
 TYPICAL=TYPICALPRICE()
 WEIGHTED=WEIGHTEDCLOSE()
 
-for k, v in pairs(ADX(CLOSE,10)) do
+for k, v in pairs(CHAIKIN(3,10)) do
    print(k, v)
 end
 
