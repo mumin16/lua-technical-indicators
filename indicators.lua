@@ -398,20 +398,33 @@ local out={}
 return out
 end
 
---%K = (CLOSE-LOW(%K))/(HIGH(%K)-LOW(%K))*100
---%D = SMA(%K, N)
+--%K=(Price-L5)/(H5-L5)
+--%D=100*((K1+K2+K3)/3)
 function STOCHASTIC(Kperiod,Dperiod,slowing)
-local ll=LOWEST(LOW,Kperiod)
-local hh=HIGHEST(HIGH,Kperiod)
-local out={}
-  for  i=1,#hh-Kperiod-1,1 do
-    out[i]=(CLOSE[i+Kperiod-1]-ll[i+Kperiod-1])/(hh[i+Kperiod-1]-ll[i+Kperiod-1]) * 100
+  local ExtMainBuffer={}
+  local ExtLowesBuffer=LOWEST(LOW,Kperiod)
+  local ExtHighesBuffer=HIGHEST(HIGH,Kperiod)
+  local start=Kperiod+slowing;
+--- main cycle
+  for i=start+1, #CLOSE ,1 do
+    
+      sumlow=0.0;
+      sumhigh=0.0;
+      
+      for k=(i-slowing+1),i,1 do
+        
+         sumlow =sumlow+(CLOSE[k]-ExtLowesBuffer[k]);
+         sumhigh=sumhigh+(ExtHighesBuffer[k]-ExtLowesBuffer[k]);
+        
+      end 
+      
+      if sumhigh==0.0 then ExtMainBuffer[i-start]=100.0 else  ExtMainBuffer[i-start]=sumlow/sumhigh*100 end
   end
-return SMA(out, Dperiod)
+return ExtMainBuffer  
 end
 
 function STOCHASTICSIGNAL(Kperiod,Dperiod,slowing)
-return SMA(STOCHASTIC(Kperiod,Dperiod,slowing),slowing)
+return SMA(STOCHASTIC(Kperiod,Dperiod,slowing),Dperiod)
 end
 
 --Average Directional Index
@@ -475,6 +488,15 @@ local out={}
 return out
 end
 
+function ROC(source,period)
+local out={}
+  for  i=period+1 , #source,1 do
+    out[i-period] = (source[i]-source[i-period])/source[i] * 100;
+  end
+return out
+end
+
+
 function write()
 
 local i=1
@@ -492,7 +514,8 @@ MEDIAN=MEDIANPRICE()
 TYPICAL=TYPICALPRICE()
 WEIGHTED=WEIGHTEDCLOSE()
 
-for k, v in pairs(CHAIKIN(3,10)) do
+
+for k, v in pairs(STOCHASTICSIGNAL(5,3,5)) do
    print(k, v)
 end
 
