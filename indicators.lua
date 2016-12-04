@@ -336,11 +336,13 @@ local out={}
     for  i=1,#CLOSE,1 do
       if i-1==0 then out[i]=(((CLOSE[i] - LOW[i]) - (HIGH[i] - CLOSE[i])) / (HIGH[i] - LOW[i])) * VOLUME[i] 
       else out[i]=(((CLOSE[i] - LOW[i]) - (HIGH[i] - CLOSE[i])) / (HIGH[i] - LOW[i])) * VOLUME[i] + out[i-1] end
+    
+      if out[i]~=out[i] then out[i]=out[i-1] end
     end
 return out  
 end
 
-function MACD(source,fast,slow)
+function MACD(source,fast,slow,signal)
 local fastema=EMA(source,fast)
 local slowema=EMA(source,slow)
 local out={}
@@ -427,55 +429,55 @@ function STOCHASTICSIGNAL(Kperiod,Dperiod,slowing)
 return SMA(STOCHASTIC(Kperiod,Dperiod,slowing),Dperiod)
 end
 
---Average Directional Index
---ADX = SUM[(+DI-(-DI))/(+DI+(-DI)), N]/N
-function ADX(source,period)
-local out={}
-return out
-end
-
-function PLUSDI(source,period)
-local out={}
-return out
-end
-
-function MINUSDI(source,period)
-local out={}
-return out
-end
-
 
 --Triple Exponential Average
 function TRIX(source,period)
-local ema=EMA(EMA(EMA(source,period),period),period)
+local ema=EMA(source,period)
+for i=1,period-1,1 do table.remove(ema,1) end
+local ema2=EMA(ema,period)
+for i=1,period-1,1 do table.remove(ema2,1) end
+local ema3=EMA(ema2,period)
+     
 local out={}
-  for  i=1,#ema,1 do
-    if i==1 then out[i]=0 else out[i]=(ema[i] - ema[i-1])/ ema[i-1] end
+  for  i=period,#ema3,1 do
+    out[i-period+1]=(ema3[i] - ema3[i-1])/ ema3[i-1] 
   end
 return out
 end
 
 function DEMA(source,period)
 local ema=EMA(source,period)
+for i=1,period-1,1 do table.remove(ema,1) end
 local emaofema=EMA(ema,period)
 local out={}
-  for  i=1,#emaofema,1 do
-    out[i]=2*ema[i]-emaofema[i]
+  for  i=period,#emaofema,1 do
+    out[i-period+1]=2*ema[i]-emaofema[i]
   end
 return out
 end
 
 function TEMA(source,period)
 local ema=EMA(source,period)
+for i=1,period-1,1 do table.remove(ema,1) end
 local emaofema=EMA(ema,period)
+for i=1,period-1,1 do table.remove(emaofema,1) end
 local emaofemaofema=EMA(emaofema,period)
+
 local out={}
-  for  i=1,#emaofemaofema,1 do
-    out[i]=3*ema[i]-3*emaofema[i]+emaofemaofema[i];
+  for  i=period,#emaofemaofema,1 do
+    out[i-period+1]=3*ema[i+period-1]-3*emaofema[i]+emaofemaofema[i];
   end
 return out
 end
 
+--Detrended Price Oscillator
+function DPO(source,period)
+   ExtMAPeriod=period/2+1;
+local sma=SMA(source,ExtMAPeriod)
+local out={} 
+  for j=1,#sma,1 do out[j] = source[j+ExtMAPeriod-1]-sma[j] end
+return out
+end
 
 function CHAIKIN(fast,slow)
 local ad=AD()
@@ -488,6 +490,7 @@ local out={}
 return out
 end
 
+--Rate of Change 
 function ROC(source,period)
 local out={}
   for  i=period+1 , #source,1 do
@@ -496,9 +499,132 @@ local out={}
 return out
 end
 
+--MASS INDEX
+function MI(ema1period,ema2period,massperiod)
+local hl={}
+  for  i=1 , #CLOSE,1 do
+    hl[i] = HIGH[i]-LOW[i]
+  end
+local ema=EMA(hl,ema1period)
+local emaofema=EMA(ema,ema2period)
+local ratio={}
+  for  j=1 , #emaofema,1 do
+    ratio[j] = ema[j]/emaofema[j] 
+  end
+return SUM(ratio,massperiod)
+end 
+
+--PLUSDI=100*(sumplusdm/sumtr)
+function PLUSDI(period)
+local plusdm={}
+  for i=2,#CLOSE,1 do
+    if HIGH[i]-HIGH[i-1]>LOW[i-1]-LOW[i] then plusdm[i-1]=math.max(HIGH[i]-HIGH[i-1],0) else plusdm[i-1]=0 end
+  end
+  
+local sumplusdm={}
+local sum=0
+  for i=1,period,1 do
+    sum=sum+plusdm[i]
+  end
+sumplusdm[1]=sum
+  for i=1,#plusdm-period,1 do
+    sumplusdm[i+1]=sumplusdm[i]-(sumplusdm[i]/period)+plusdm[i+period]
+  end
+
+local tr={}
+  for i=2,#CLOSE,1 do
+      tr[i-1]=math.max(HIGH[i]-LOW[i],math.abs(HIGH[i]-CLOSE[i-1]),math.abs(LOW[i]-CLOSE[i-1])) 
+  end
+
+local sumtr={}
+sum=0
+  for i=1,period,1 do
+    sum=sum+tr[i]
+  end
+sumtr[1]=sum
+  for i=1,#tr-period,1 do
+    sumtr[i+1]=sumtr[i]-(sumtr[i]/period)+tr[i+period]
+  end
+  
+local out={}
+  for i=1,#sumtr,1 do
+      out[i]=100*(sumplusdm[i]/sumtr[i])
+  end
+return out
+end
+
+--MINUSDI=100*(summinusdm/sumtr)
+function MINUSDI(period)
+local minusdm={}
+  for i=2,#CLOSE,1 do
+    if LOW[i-1]-LOW[i]>HIGH[i]-HIGH[i-1] then minusdm[i-1]=math.max(LOW[i-1]-LOW[i],0) else minusdm[i-1]=0 end
+  end
+  
+local summinusdm={}
+local sum=0
+  for i=1,period,1 do
+    sum=sum+minusdm[i]
+  end
+summinusdm[1]=sum
+  for i=1,#minusdm-period,1 do
+    summinusdm[i+1]=summinusdm[i]-(summinusdm[i]/period)+minusdm[i+period]
+  end
+
+local tr={}
+  for i=2,#CLOSE,1 do
+      tr[i-1]=math.max(HIGH[i]-LOW[i],math.abs(HIGH[i]-CLOSE[i-1]),math.abs(LOW[i]-CLOSE[i-1])) 
+  end
+
+local sumtr={}
+sum=0
+  for i=1,period,1 do
+    sum=sum+tr[i]
+  end
+sumtr[1]=sum
+  for i=1,#tr-period,1 do
+    sumtr[i+1]=sumtr[i]-(sumtr[i]/period)+tr[i+period]
+  end
+  
+local out={}
+  for i=1,#sumtr,1 do
+      out[i]=100*(summinusdm[i]/sumtr[i])
+  end
+return out
+end
+
+
+--Average Directional Index
+function ADX(period)
+local plusdi=PLUSDI(period)
+local minusdi=MINUSDI(period)
+local diff={}
+  for i=1,#minusdi,1 do
+      diff[i]=math.abs(plusdi[i]-minusdi[i])
+  end
+local sum={}
+  for i=1,#minusdi,1 do
+      sum[i]=plusdi[i]+minusdi[i]
+  end  
+local dx={}
+  for i=1,#minusdi,1 do
+      dx[i]=100*(diff[i]/sum[i])
+  end 
+ local out={}
+ local sma1=0
+  for i=1,period,1 do
+      sma1=sma1+dx[i]
+  end 
+  out[1]=sma1/period
+  for i=1,#dx-period,1 do
+      out[i+1]=((out[i]*(period-1))+dx[i+period-1])/period
+  end   
+return out
+end
+
+
 
 function write()
-
+--C:\\Users\\x64\\AppData\\Roaming\\MetaQuotes\\Terminal\\BB190E062770E27C3E79391AB0D1A117\\MQL4\\Files\\
 local i=1
 for line in io.lines("data.txt") do
     local open, high, low, close, volume = line:match("%s*(.-),%s*(.-),%s*(.-),%s*(.-),%s*(.+)")
@@ -515,7 +641,8 @@ TYPICAL=TYPICALPRICE()
 WEIGHTED=WEIGHTEDCLOSE()
 
 
-for k, v in pairs(STOCHASTICSIGNAL(5,3,5)) do
+
+for k, v in pairs(ROC(CLOSE,12)) do
    print(k, v)
 end
 
