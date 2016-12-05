@@ -702,6 +702,20 @@ function ADX(ExtADXPeriod)
 return ExtADXBuffer
 end
 
+--Chaikin Volatility
+function CHV(ExtCHVPeriod,ExtSmoothPeriod)
+--- fill H-L(i) buffer 
+    local ExtHLBuffer={}
+    for i=1 ,#CLOSE,1 do ExtHLBuffer[i]=HIGH[i]-LOW[i] end
+--- calculate smoothed H-L(i) buffer
+     local ExtSHLBuffer= SMA(ExtHLBuffer,ExtSmoothPeriod);
+--- calculate CHV buffer
+    local ExtCHVBuffer={}
+    for i=1+ExtCHVPeriod ,#CLOSE-ExtCHVPeriod+1,1 do     
+        ExtCHVBuffer[i]=100.0*(ExtSHLBuffer[i]-ExtSHLBuffer[i-ExtCHVPeriod])/ExtSHLBuffer[i-ExtCHVPeriod];  
+    end 
+return ExtCHVBuffer
+end
 
 function write()
 --C:\\Users\\x64\\AppData\\Roaming\\MetaQuotes\\Terminal\\BB190E062770E27C3E79391AB0D1A117\\MQL4\\Files\\
@@ -722,7 +736,7 @@ WEIGHTED=WEIGHTEDCLOSE()
 
 
 
-for k, v in pairs(ADX(14)) do
+for k, v in pairs(CHV(10,10)) do
    print(k, v)
 end
 
