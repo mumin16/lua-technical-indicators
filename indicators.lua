@@ -567,113 +567,140 @@ local ratio={}
 return SUM(ratio,massperiod)
 end 
 
---PLUSDI=100*(sumplusdm/sumtr)
+
 function PLUSDI(period)
-local plusdm={}
-  for i=2,#CLOSE,1 do
-    if HIGH[i]-HIGH[i-1]>LOW[i-1]-LOW[i] then plusdm[i-1]=math.max(HIGH[i]-HIGH[i-1],0) else plusdm[i-1]=0 end
-  end
-  
-local sumplusdm={}
-local sum=0
-  for i=1,period,1 do
-    sum=sum+plusdm[i]
-  end
-sumplusdm[1]=sum
-  for i=1,#plusdm-period,1 do
-    sumplusdm[i+1]=sumplusdm[i]-(sumplusdm[i]/period)+plusdm[i+period]
-  end
+  local    ExtPDBuffer={};
+  --local    ExtNDBuffer={}; 
+  local    ExtTmpBuffer={}; 
 
-local tr={}
-  for i=2,#CLOSE,1 do
-      tr[i-1]=math.max(HIGH[i]-LOW[i],math.abs(HIGH[i]-CLOSE[i-1]),math.abs(LOW[i]-CLOSE[i-1])) 
+      local  start=2;
+     
+--- main cycle
+  for i=start,#CLOSE,1 do
+     
+      --- get some data
+      local Hi    =HIGH[i];
+      local prevHi=HIGH[i-1];
+      local Lo    =LOW[i];
+      local prevLo=LOW[i-1];
+      local prevCl=CLOSE[i-1];
+      --- fill main positive and main negative buffers
+      local dTmpP=Hi-prevHi;
+      local dTmpN=prevLo-Lo;
+      if(dTmpP<0.0)  then dTmpP=0.0; end
+      if(dTmpN<0.0)  then dTmpN=0.0; end
+      if(dTmpP>dTmpN) then dTmpN=0.0;
+      else
+        
+         if(dTmpP<dTmpN) then dTmpP=0.0;
+         else
+           
+            dTmpP=0.0;
+            --dTmpN=0.0;
+         end
+      end
+      --- define TR
+      local tr=math.max(math.max(math.abs(Hi-Lo),math.abs(Hi-prevCl)),math.abs(Lo-prevCl));
+      ---
+      if(tr~=0.0) then
+        
+         ExtPDBuffer[i]=100.0*dTmpP/tr;
+         --ExtNDBuffer[i]=100.0*dTmpN/tr;
+        
+      else
+        
+         ExtPDBuffer[i]=0.0;
+         --ExtNDBuffer[i]=0.0;
+      end
   end
+ 
+ ExtPDBuffer[1]=0
+ local out={}
+ out=EMA(ExtPDBuffer,period);
+--for i=1, period-1,1 do table.remove(out,1) end
 
-local sumtr={}
-sum=0
-  for i=1,period,1 do
-    sum=sum+tr[i]
-  end
-sumtr[1]=sum
-  for i=1,#tr-period,1 do
-    sumtr[i+1]=sumtr[i]-(sumtr[i]/period)+tr[i+period]
-  end
-  
-local out={}
-  for i=1,#sumtr,1 do
-      out[i]=100*(sumplusdm[i]/sumtr[i])
-  end
 return out
 end
 
---MINUSDI=100*(summinusdm/sumtr)
+
 function MINUSDI(period)
-local minusdm={}
-  for i=2,#CLOSE,1 do
-    if LOW[i-1]-LOW[i]>HIGH[i]-HIGH[i-1] then minusdm[i-1]=math.max(LOW[i-1]-LOW[i],0) else minusdm[i-1]=0 end
-  end
-  
-local summinusdm={}
-local sum=0
-  for i=1,period,1 do
-    sum=sum+minusdm[i]
-  end
-summinusdm[1]=sum
-  for i=1,#minusdm-period,1 do
-    summinusdm[i+1]=summinusdm[i]-(summinusdm[i]/period)+minusdm[i+period]
-  end
+  --local    ExtPDBuffer={};
+  local    ExtNDBuffer={}; 
+  local    ExtTmpBuffer={}; 
 
-local tr={}
-  for i=2,#CLOSE,1 do
-      tr[i-1]=math.max(HIGH[i]-LOW[i],math.abs(HIGH[i]-CLOSE[i-1]),math.abs(LOW[i]-CLOSE[i-1])) 
+      local  start=2;
+     
+--- main cycle
+  for i=start,#CLOSE,1 do
+     
+      --- get some data
+      local Hi    =HIGH[i];
+      local prevHi=HIGH[i-1];
+      local Lo    =LOW[i];
+      local prevLo=LOW[i-1];
+      local prevCl=CLOSE[i-1];
+      --- fill main positive and main negative buffers
+      local dTmpP=Hi-prevHi;
+      local dTmpN=prevLo-Lo;
+      if(dTmpP<0.0)  then dTmpP=0.0; end
+      if(dTmpN<0.0)  then dTmpN=0.0; end
+      if(dTmpP>dTmpN) then dTmpN=0.0;
+      else
+        
+         if(dTmpP<dTmpN) then dTmpP=0.0;
+         else
+           
+            --dTmpP=0.0;
+            dTmpN=0.0;
+         end
+      end
+      --- define TR
+      local tr=math.max(math.max(math.abs(Hi-Lo),math.abs(Hi-prevCl)),math.abs(Lo-prevCl));
+      ---
+      if(tr~=0.0) then
+        
+         --ExtPDBuffer[i]=100.0*dTmpP/tr;
+         ExtNDBuffer[i]=100.0*dTmpN/tr;
+        
+      else
+        
+         --ExtPDBuffer[i]=0.0;
+         ExtNDBuffer[i]=0.0;
+      end
   end
+ 
+ ExtNDBuffer[1]=0
+ local out={}
+ out=EMA(ExtNDBuffer,period);
+--for i=1, period-1,1 do table.remove(out,1) end
 
-local sumtr={}
-sum=0
-  for i=1,period,1 do
-    sum=sum+tr[i]
-  end
-sumtr[1]=sum
-  for i=1,#tr-period,1 do
-    sumtr[i+1]=sumtr[i]-(sumtr[i]/period)+tr[i+period]
-  end
-  
-local out={}
-  for i=1,#sumtr,1 do
-      out[i]=100*(summinusdm[i]/sumtr[i])
-  end
 return out
 end
 
 
 --Average Directional Index
-function ADX(period)
-local plusdi=PLUSDI(period)
-local minusdi=MINUSDI(period)
-local diff={}
-  for i=1,#minusdi,1 do
-      diff[i]=math.abs(plusdi[i]-minusdi[i])
+function ADX(ExtADXPeriod)
+  local ExtTmpBuffer={}
+      local ExtPDIBuffer=PLUSDI(ExtADXPeriod)
+      local ExtNDIBuffer=MINUSDI(ExtADXPeriod)
+      
+  for i=1,#CLOSE,1 do
+      --- fill ADXTmp buffer
+      local dTmp=ExtPDIBuffer[i]+ExtNDIBuffer[i];
+      if(dTmp~=0.0) then
+         dTmp=100.0*math.abs((ExtPDIBuffer[i]-ExtNDIBuffer[i])/dTmp);
+      else
+         dTmp=0.0;
+      end
+      ExtTmpBuffer[i]=dTmp;
   end
-local sum={}
-  for i=1,#minusdi,1 do
-      sum[i]=plusdi[i]+minusdi[i]
-  end  
-local dx={}
-  for i=1,#minusdi,1 do
-      dx[i]=100*(diff[i]/sum[i])
-  end 
- local out={}
- local sma1=0
-  for i=1,period,1 do
-      sma1=sma1+dx[i]
-  end 
-  out[1]=sma1/period
-  for i=1,#dx-period,1 do
-      out[i+1]=((out[i]*(period-1))+dx[i+period-1])/period
-  end   
-return out
+     
+     
+           --- fill smoothed ADX buffer
+      ExtADXBuffer=EMA(ExtTmpBuffer,ExtADXPeriod);
+      
+return ExtADXBuffer
 end
-
 
 
 function write()
@@ -695,7 +722,7 @@ WEIGHTED=WEIGHTEDCLOSE()
 
 
 
-for k, v in pairs(ASI(300)) do
+for k, v in pairs(ADX(14)) do
    print(k, v)
 end
 
