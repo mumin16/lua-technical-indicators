@@ -109,7 +109,7 @@ return out
 end
 
 --Standart Deviation
-function STDDEV(source,period,deviation)
+function STDDEV(source,period)
 local sma=SMA(source,period)
 local out={}
   for  i=1,#sma,1 do
@@ -342,7 +342,7 @@ local out={}
 return out  
 end
 
-function MACD(source,fast,slow,signal)
+function MACD(source,fast,slow)
 local fastema=EMA(source,fast)
 local slowema=EMA(source,slow)
 local out={}
@@ -410,8 +410,8 @@ function STOCHASTIC(Kperiod,Dperiod,slowing)
 --- main cycle
   for i=start+1, #CLOSE ,1 do
     
-      sumlow=0.0;
-      sumhigh=0.0;
+      local sumlow=0.0;
+      local sumhigh=0.0;
       
       for k=(i-slowing+1),i,1 do
         
@@ -472,7 +472,7 @@ end
 
 --Detrended Price Oscillator
 function DPO(source,period)
-   ExtMAPeriod=period/2+1;
+local   ExtMAPeriod=period/2+1;
 local sma=SMA(source,ExtMAPeriod)
 local out={} 
   for j=1,#sma,1 do out[j] = source[j+ExtMAPeriod-1]-sma[j] end
@@ -497,6 +497,59 @@ local out={}
     out[i-period] = (source[i]-source[i-period])/source[i] * 100;
   end
 return out
+end
+
+--Price and Volume Trend
+function PVT()
+local out={}
+  for  i=1 , #CLOSE,1 do
+    if i==1 then out[i] =0 else out[i] = ((CLOSE[i]-CLOSE[i-1])/CLOSE[i-1])*VOLUME[i]+out[i-1] end
+  end
+return out
+end
+
+
+--Accumulation Swing Index
+function ASI(InpT)
+ local ExtTpoints= InpT
+
+      local pos=2;
+      local ExtASIBuffer={}
+      ExtASIBuffer[1]=0.0;
+      local ExtSIBuffer={}
+      ExtSIBuffer[1]=0.0;
+      local ExtTRBuffer={}
+      ExtTRBuffer[1]=HIGH[1]-LOW[1];
+     
+     
+  for i=pos, #CLOSE,1 do
+     
+      --get some data
+      local dPrevClose=CLOSE[i-1];
+      local dPrevOpen=OPEN[i-1];
+      local dClose=CLOSE[i];
+      local dHigh=HIGH[i];
+      local dLow=LOW[i];
+      --- fill TR buffer
+      ExtTRBuffer[i]=math.max(dHigh,dPrevClose)-math.min(dLow,dPrevClose);
+      local ER=0.0;
+      if(true~=(dPrevClose>=dLow and dPrevClose<=dHigh)) then
+        
+         if(dPrevClose>dHigh) then ER=math.abs(dHigh-dPrevClose); end
+         if(dPrevClose<dLow)  then ER=math.abs(dLow-dPrevClose); end
+      end  
+      local K=math.max(math.abs(dHigh-dPrevClose),math.abs(dLow-dPrevClose));
+      local SH=math.abs(dPrevClose-dPrevOpen);
+      local R=ExtTRBuffer[i]-0.5*ER+0.25*SH;
+      --- calculate SI value
+      if R==0.0 or ExtTpoints==0.0 then ExtSIBuffer[i]=0.0;
+      else     ExtSIBuffer[i]=50*(dClose-dPrevClose+0.5*(dClose-OPEN[i])+
+                              0.25*(dPrevClose-dPrevOpen))*(K/ExtTpoints)/R;
+      end
+      --- write down ASI buffer value
+      ExtASIBuffer[i]=ExtASIBuffer[i-1]+ExtSIBuffer[i];
+  end
+  return ExtASIBuffer
 end
 
 --MASS INDEX
@@ -642,7 +695,7 @@ WEIGHTED=WEIGHTEDCLOSE()
 
 
 
-for k, v in pairs(ROC(CLOSE,12)) do
+for k, v in pairs(ASI(300)) do
    print(k, v)
 end
 

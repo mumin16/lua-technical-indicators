@@ -48,7 +48,7 @@ int OnCalculate(const int rates_total,
   if(handle>0)
     {
     
-     for(int i=rates_total-100; i<=rates_total-1; i++) 
+     for(int i=0; i<=rates_total-1; i++) 
      {
       FileWrite(handle,open[i], ",",high[i],",",low[i], ",",close[i], ",",tick_volume[i]);
      } 
@@ -57,12 +57,17 @@ int OnCalculate(const int rates_total,
     }
 
   
+   
   
-  
-    // indHandle= iTriX(NULL, 0,  10,  PRICE_CLOSE );
-  // indHandle= iDEMA( NULL, 0,  10, 0, PRICE_CLOSE  );
-   //indHandle= iTEMA( NULL, 0,  10, 0, PRICE_CLOSE  );
+     //indHandle= iTriX(NULL, 0,  14,  PRICE_CLOSE );
+     //indHandle= iDEMA( NULL, 0,  14, 0, PRICE_CLOSE  );
+   //indHandle= iTEMA( NULL, 0,  14, 0, PRICE_CLOSE  );
   //indHandle= iChaikin( NULL, 0,    3,   10,   MODE_EMA,  VOLUME_TICK   );
+
+ 
+ 
+ //indHandle= iADX( NULL, 0,   14 );
+ 
   
   
   
@@ -84,9 +89,9 @@ int OnCalculate(const int rates_total,
     handle=FileOpen("out.txt", FILE_ANSI|FILE_TXT|FILE_WRITE);
       if(handle>0)
     {
-     for(int i=to_copy-100; i<=to_copy-1; i++) 
+     for(int i=0; i<=to_copy-1; i++) 
      {
-      FileWrite(handle,100+i-to_copy+1,"  ",out[i]);
+      FileWrite(handle,i+1,"  ",out[i]);
      } 
     
      FileClose(handle);

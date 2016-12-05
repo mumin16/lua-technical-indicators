@@ -70,13 +70,11 @@ int OnCalculate(const int rates_total,
       //out[i]=iOBV(NULL,0,PRICE_CLOSE,i);
       //out[i]=iATR(NULL,0,10,i);
       //out[i]=iRVI(NULL,0,10,MODE_MAIN,i);
-      //out[i]=iAO(NULL,0,i);
+      //out[i]=iAO(NULL,0,i); //biz de bir fazla donuyor, sanirim ilk renk icin mt4 reserve ediyor ilki
       //out[i]=iAD(NULL,0,i); 
-      //out[i]=iAC(NULL,0,i);;
-      //int val_index=iHighest(NULL,0,MODE_CLOSE,10,i);
-      //out[i]=close[val_index];
-      //int val_index=iLowest(NULL,0,MODE_CLOSE,10,i);
-      //out[i]=close[val_index];
+      //out[i]=iAC(NULL,0,i);   //biz de bir fazla donuyor, sanirim ilk renk icin mt4 reserve ediyor ilki
+      //int val_index=iHighest(NULL,0,MODE_CLOSE,10,i);  out[i]=close[val_index];
+      //int val_index=iLowest(NULL,0,MODE_CLOSE,10,i);     out[i]=close[val_index];
       //out[i]=iMFI(NULL,0,10,i);
       //out[i]=iMACD(NULL,0,12,26,9,PRICE_CLOSE,MODE_MAIN,i);
       //out[i]=iMACD(NULL,0,12,26,9,PRICE_CLOSE,MODE_SIGNAL,i);      
@@ -88,9 +86,8 @@ int OnCalculate(const int rates_total,
       //out[i]=iOsMA(NULL,0,12,26,9,PRICE_CLOSE,i);
       //out[i]=iStochastic(NULL,0,5,3,5,MODE_SMA,0,MODE_MAIN,i);
       //out[i]=iStochastic(NULL,0,5,3,5,MODE_SMA,0,MODE_SIGNAL,i);
-      
-            
-      
+     
+     
       out[i]=iADX(NULL,0,10,PRICE_CLOSE,MODE_PLUSDI,i);
       //out[i]=iADX(NULL,0,10,PRICE_CLOSE,MODE_MINUSDI,i);
       //out[i]=iADX(NULL,0,10,PRICE_CLOSE,MODE_MAIN,i);
