@@ -742,11 +742,55 @@ local ExtSlowSC=2.0/(ExtSlowPeriodEMA+1.0);
       local dCurrentSSC=(CalculateER(i,price,amaperiod)*(ExtFastSC-ExtSlowSC))+ExtSlowSC;
       --- calculate AMA
       local dPrevAMA=0
-      if i~=1+amaperiod then dPrevAMA=ExtAMABuffer[i-1] else dPrevAMA=price[i-1] end
-      ExtAMABuffer[i]=math.pow(dCurrentSSC,2)*(price[i]-dPrevAMA)+dPrevAMA;
+      if i~=1+amaperiod then dPrevAMA=ExtAMABuffer[i-amaperiod-1] else dPrevAMA=price[i-1] end
+      ExtAMABuffer[i-amaperiod]=math.pow(dCurrentSSC,2)*(price[i]-dPrevAMA)+dPrevAMA;
   end
 return ExtAMABuffer
 end
+
+
+--Fractal Adaptive Moving Average
+function FAMA(price,InpPeriodFrAMA)
+local function iHighest( StartPos,  Depth)   
+   local res=HIGH[StartPos];
+   for i=StartPos-Depth+1,StartPos,1 do
+      if(HIGH[i]>res) then
+         res=HIGH[i]; end
+    end
+return(res);
+end
+local function iLowest( StartPos,  Depth)
+   local res=LOW[StartPos];
+   for i=StartPos-Depth+1,StartPos,1 do
+      if(LOW[i]<res) then
+         res=LOW[i]; end
+    end
+return(res);
+end  
+  
+--- main cycle  
+local limit=2*InpPeriodFrAMA
+local FrAmaBuffer={}
+FrAmaBuffer[1]=price[limit-1];
+
+  for i=limit,#price,1 do
+     
+      local Hi1=iHighest(i,InpPeriodFrAMA);
+      local Lo1=iLowest(i,InpPeriodFrAMA);
+      local Hi2=iHighest(i-InpPeriodFrAMA,InpPeriodFrAMA);
+      local Lo2=iLowest(i-InpPeriodFrAMA,InpPeriodFrAMA);
+      local Hi3=iHighest(i,2*InpPeriodFrAMA);
+      local Lo3=iLowest(i,2*InpPeriodFrAMA);
+      local N1=(Hi1-Lo1)/InpPeriodFrAMA;
+      local N2=(Hi2-Lo2)/InpPeriodFrAMA;
+      local N3=(Hi3-Lo3)/(2*InpPeriodFrAMA);
+      local D=(math.log(N1+N2)-math.log(N3))/math.log(2.0);
+      local ALFA=math.exp(-4.6*(D-1.0));
+      FrAmaBuffer[i-limit+2]=ALFA*price[i]+(1-ALFA)*FrAmaBuffer[i-1-limit+2];
+  end  
+return FrAmaBuffer
+end
+
 function write()
 --C:\\Users\\x64\\AppData\\Roaming\\MetaQuotes\\Terminal\\BB190E062770E27C3E79391AB0D1A117\\MQL4\\Files\\
 local i=1
@@ -766,7 +810,7 @@ WEIGHTED=WEIGHTEDCLOSE()
 
 
 
-for k, v in pairs(AMA(OPEN,10,2,30)) do
+for k, v in pairs(FAMA(CLOSE,14)) do
    print(k, v)
 end
 
