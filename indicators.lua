@@ -717,6 +717,36 @@ function CHV(ExtCHVPeriod,ExtSmoothPeriod)
 return ExtCHVBuffer
 end
 
+
+  
+--Adaptive Moving Average
+function AMA(price,amaperiod,ExtFastPeriodEMA,ExtSlowPeriodEMA)
+  
+local function CalculateER(nPosition,PriceData,ExtPeriodAMA)
+   local dSignal=math.abs(PriceData[nPosition]-PriceData[nPosition-ExtPeriodAMA]);
+   local dNoise=0.0;
+   for delta=0,ExtPeriodAMA-1,1 do
+      dNoise=dNoise+math.abs(PriceData[nPosition-delta]-PriceData[nPosition-delta-1]); end
+   if(dNoise~=0.0) then return(dSignal/dNoise); end
+   return(0.0);
+end
+
+--- calculate ExtFastSC & ExtSlowSC
+local ExtFastSC=2.0/(ExtFastPeriodEMA+1.0);
+local ExtSlowSC=2.0/(ExtSlowPeriodEMA+1.0);
+
+--- main cycle
+  local ExtAMABuffer={} 
+  for i=1+amaperiod,#CLOSE,1 do
+      --- calculate SSC
+      local dCurrentSSC=(CalculateER(i,price,amaperiod)*(ExtFastSC-ExtSlowSC))+ExtSlowSC;
+      --- calculate AMA
+      local dPrevAMA=0
+      if i~=1+amaperiod then dPrevAMA=ExtAMABuffer[i-1] else dPrevAMA=price[i-1] end
+      ExtAMABuffer[i]=math.pow(dCurrentSSC,2)*(price[i]-dPrevAMA)+dPrevAMA;
+  end
+return ExtAMABuffer
+end
 function write()
 --C:\\Users\\x64\\AppData\\Roaming\\MetaQuotes\\Terminal\\BB190E062770E27C3E79391AB0D1A117\\MQL4\\Files\\
 local i=1
@@ -736,7 +766,7 @@ WEIGHTED=WEIGHTEDCLOSE()
 
 
 
-for k, v in pairs(CHV(10,10)) do
+for k, v in pairs(AMA(OPEN,10,2,30)) do
    print(k, v)
 end
 
