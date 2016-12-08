@@ -1,6 +1,6 @@
 	--global pricedata
 	OPEN = { };	HIGH = { };	LOW =  { };  CLOSE = { };	VOLUME = { };	MEDIAN = { };	TYPICAL = { };	WEIGHTED = { };
-
+BUY = { };	SELL = { };
 
 function MEDIANPRICE()
 local out={}
@@ -402,7 +402,7 @@ end
 
 --%K=(Price-L5)/(H5-L5)
 --%D=100*((K1+K2+K3)/3)
-function STOCHASTIC(Kperiod,Dperiod,slowing)
+function STOCHASTIC(Kperiod,slowing)
   local ExtMainBuffer={}
   local ExtLowesBuffer=LOWEST(LOW,Kperiod)
   local ExtHighesBuffer=HIGHEST(HIGH,Kperiod)
@@ -433,9 +433,9 @@ end
 --Triple Exponential Average
 function TRIX(source,period)
 local ema=EMA(source,period)
-for i=1,period-1,1 do table.remove(ema,1) end
+for _=1,period-1,1 do table.remove(ema,1) end
 local ema2=EMA(ema,period)
-for i=1,period-1,1 do table.remove(ema2,1) end
+for _=1,period-1,1 do table.remove(ema2,1) end
 local ema3=EMA(ema2,period)
      
 local out={}
@@ -447,7 +447,7 @@ end
 
 function DEMA(source,period)
 local ema=EMA(source,period)
-for i=1,period-1,1 do table.remove(ema,1) end
+for _=1,period-1,1 do table.remove(ema,1) end
 local emaofema=EMA(ema,period)
 local out={}
   for  i=period,#emaofema,1 do
@@ -458,9 +458,9 @@ end
 
 function TEMA(source,period)
 local ema=EMA(source,period)
-for i=1,period-1,1 do table.remove(ema,1) end
+for _=1,period-1,1 do table.remove(ema,1) end
 local emaofema=EMA(ema,period)
-for i=1,period-1,1 do table.remove(emaofema,1) end
+for _=1,period-1,1 do table.remove(emaofema,1) end
 local emaofemaofema=EMA(emaofema,period)
 
 local out={}
@@ -571,7 +571,7 @@ end
 function PLUSDI(period)
   local    ExtPDBuffer={};
   --local    ExtNDBuffer={}; 
-  local    ExtTmpBuffer={}; 
+ 
 
       local  start=2;
      
@@ -626,7 +626,7 @@ end
 function MINUSDI(period)
   --local    ExtPDBuffer={};
   local    ExtNDBuffer={}; 
-  local    ExtTmpBuffer={}; 
+
 
       local  start=2;
      
@@ -697,7 +697,7 @@ function ADX(ExtADXPeriod)
      
      
            --- fill smoothed ADX buffer
-      ExtADXBuffer=EMA(ExtTmpBuffer,ExtADXPeriod);
+    local  ExtADXBuffer=EMA(ExtTmpBuffer,ExtADXPeriod);
       
 return ExtADXBuffer
 end
@@ -791,6 +791,54 @@ FrAmaBuffer[1]=price[limit-1];
 return FrAmaBuffer
 end
 
+function CROSS(source,destination) 
+  local cross={}
+  local lendiff=math.abs(#source-#destination)
+  
+  
+  
+  if #source>#destination then 
+  
+  for i=2,#destination,1 do
+     if source[i+lendiff]>destination[i] and source[i+lendiff-1]<=destination[i-1] then cross[i-1]=1 else cross[i-1]=0 end
+  end  
+  else
+    
+  for i=2,#source,1 do
+     if source[i]>destination[i+lendiff] and source[i-1]<=destination[i+lendiff-1] then cross[i-1]=1 else cross[i-1]=0 end
+  end  
+  
+  end 
+return cross 
+end
+
+function REPORT(buy,sell)
+
+  local lendiffbuy=math.abs(#CLOSE-#buy)
+  local lendiffsell=math.abs(#CLOSE-#sell)
+  local ilkyatirim=0--tl
+  local lastpos=0--1 al 0 sat
+  local alfiyat=0--tl
+  local satfiyat=0--tl
+  local kapafiyat=0--tl
+  local toplamkz=0
+  print("RAPOR")
+  for i=1 ,#CLOSE,1 do
+   if buy[i]==1 and lastpos==0 
+      then lastpos=1 alfiyat=CLOSE[lendiffbuy+i] if satfiyat==0 then ilkyatirim=alfiyat end  print("al",CLOSE[lendiffbuy+i]) end
+   if sell[i]==1 and lastpos==1 
+      then lastpos=0 satfiyat=CLOSE[lendiffsell+i] 
+        print("sat",CLOSE[lendiffsell+i]) print("K/Z",satfiyat-alfiyat)  toplamkz=toplamkz+satfiyat-alfiyat print(toplamkz) end
+  end
+  
+  --kapaportfoy
+  if lastpos==1 then kapafiyat=CLOSE[#CLOSE]  print("kapa",CLOSE[#CLOSE]) print("K/Z",kapafiyat-alfiyat) 
+      toplamkz=toplamkz+satfiyat-alfiyat print(toplamkz) end
+
+return toplamkz/ilkyatirim*100;
+end
+
+
 function write()
 --C:\\Users\\x64\\AppData\\Roaming\\MetaQuotes\\Terminal\\BB190E062770E27C3E79391AB0D1A117\\MQL4\\Files\\
 local i=1
@@ -808,11 +856,16 @@ MEDIAN=MEDIANPRICE()
 TYPICAL=TYPICALPRICE()
 WEIGHTED=WEIGHTEDCLOSE()
 
+BUY=CROSS(MOMENTUM(CLOSE,25),0)
+SELL=CROSS(0,MOMENTUM(CLOSE,25))
+
+print(REPORT(BUY,SELL))
+
+--for k, v in pairs(BUY) do
+--   print(k, v)
+--end
 
 
-for k, v in pairs(FAMA(CLOSE,14)) do
-   print(k, v)
-end
 
 end
 
