@@ -792,23 +792,33 @@ return FrAmaBuffer
 end
 
 function CROSS(source,destination) 
-  local cross={}
-  local lendiff=math.abs(#source-#destination)
+local cross={}
+ 
+if type(source)==type(cross) and type(destination)==type(1) then
+    for i=2,#source,1 do
+       if source[i]>destination and source[i-1]<=destination then cross[i-1]=1 else cross[i-1]=0 end
+    end    
+end
   
-  
-  
+if type(source)==type(1) and type(destination)==type(cross) then
+    for i=2,#destination,1 do
+       if source>destination[i] and source<=destination[i-1] then cross[i-1]=1 else cross[i-1]=0 end
+    end    
+end
+
+if type(source)==type(cross) and type(destination)==type(cross) then
+  local lendiff=math.abs(#source-#destination)  
   if #source>#destination then 
-  
-  for i=2,#destination,1 do
-     if source[i+lendiff]>destination[i] and source[i+lendiff-1]<=destination[i-1] then cross[i-1]=1 else cross[i-1]=0 end
-  end  
+    for i=2,#destination,1 do
+       if source[i+lendiff]>destination[i] and source[i+lendiff-1]<=destination[i-1] then cross[i-1]=1 else cross[i-1]=0 end
+    end  
   else
-    
-  for i=2,#source,1 do
-     if source[i]>destination[i+lendiff] and source[i-1]<=destination[i+lendiff-1] then cross[i-1]=1 else cross[i-1]=0 end
-  end  
-  
-  end 
+    for i=2,#source,1 do
+       if source[i]>destination[i+lendiff] and source[i-1]<=destination[i+lendiff-1] then cross[i-1]=1 else cross[i-1]=0 end
+    end  
+  end
+end
+
 return cross 
 end
 
@@ -856,8 +866,10 @@ MEDIAN=MEDIANPRICE()
 TYPICAL=TYPICALPRICE()
 WEIGHTED=WEIGHTEDCLOSE()
 
-BUY=CROSS(MOMENTUM(CLOSE,25),0)
-SELL=CROSS(0,MOMENTUM(CLOSE,25))
+
+
+BUY=CROSS(MOMENTUM(CLOSE,25),100)
+SELL=CROSS(100,MOMENTUM(CLOSE,25))
 
 print(REPORT(BUY,SELL))
 
