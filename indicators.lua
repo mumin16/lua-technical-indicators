@@ -1,6 +1,6 @@
 	--global pricedata
-	OPEN = { };	HIGH = { };	LOW =  { };  CLOSE = { };	VOLUME = { };	MEDIAN = { };	TYPICAL = { };	WEIGHTED = { };
-BUY = { };	SELL = { };
+DATETIME={}; OPEN={}; HIGH={}; LOW={}; CLOSE={}; VOLUME={};	MEDIAN={}; TYPICAL={}; WEIGHTED={};
+BUY={};	SELL={};
 
 function MEDIANPRICE()
 local out={}
@@ -164,7 +164,9 @@ local out={}
 return out
 end
 
-function MOMENTUM(source,period)
+function MOMENTUM(period,source)
+source=source or CLOSE
+period=period or 14
 local out={}
   for  i=1,#source,1 do
     if i+period>#source then break else out[i] = (source[i+period]*100/ source[i] ) end
@@ -491,7 +493,9 @@ return out
 end
 
 --Rate of Change 
-function ROC(source,period)
+function ROC(period,source)
+source=source or CLOSE
+period=period or 14
 local out={}
   for  i=period+1 , #source,1 do
     out[i-period] = (source[i]-source[i-period])/source[i] * 100;
@@ -849,29 +853,29 @@ return toplamkz/ilkyatirim*100;
 end
 
 
-function write()
---C:\\Users\\x64\\AppData\\Roaming\\MetaQuotes\\Terminal\\BB190E062770E27C3E79391AB0D1A117\\MQL4\\Files\\
-local i=1
-for line in io.lines("data.txt") do
-    local open, high, low, close, volume = line:match("%s*(.-),%s*(.-),%s*(.-),%s*(.-),%s*(.+)")
-    OPEN[i]=tonumber(open)
-    HIGH[i]=tonumber(high)
-    LOW[i]=tonumber(low)
-    CLOSE[i]=tonumber(close)
-    VOLUME[i]=tonumber(volume)
-    i=i+1
-end
+--function write()
+----C:\\Users\\x64\\AppData\\Roaming\\MetaQuotes\\Terminal\\BB190E062770E27C3E79391AB0D1A117\\MQL4\\Files\\
+--local i=1
+--for line in io.lines("data.txt") do
+--    local open, high, low, close, volume = line:match("%s*(.-),%s*(.-),%s*(.-),%s*(.-),%s*(.+)")
+--    OPEN[i]=tonumber(open)
+--    HIGH[i]=tonumber(high)
+--    LOW[i]=tonumber(low)
+--    CLOSE[i]=tonumber(close)
+--    VOLUME[i]=tonumber(volume)
+--    i=i+1
+--end
 
-MEDIAN=MEDIANPRICE()
-TYPICAL=TYPICALPRICE()
-WEIGHTED=WEIGHTEDCLOSE()
+--MEDIAN=MEDIANPRICE()
+--TYPICAL=TYPICALPRICE()
+--WEIGHTED=WEIGHTEDCLOSE()
 
 
 
-BUY=CROSS(MOMENTUM(CLOSE,25),100)
-SELL=CROSS(100,MOMENTUM(CLOSE,25))
+--BUY=CROSS(MOMENTUM(CLOSE,25),100)
+--SELL=CROSS(100,MOMENTUM(CLOSE,25))
 
-print(REPORT(BUY,SELL))
+--print(REPORT(BUY,SELL))
 
 --for k, v in pairs(BUY) do
 --   print(k, v)
@@ -879,6 +883,6 @@ print(REPORT(BUY,SELL))
 
 
 
-end
+--end
 
-write()
+--write()
