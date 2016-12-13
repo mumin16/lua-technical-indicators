@@ -400,8 +400,7 @@ local out={}
 return out
 end
 
---%K=(Price-L5)/(H5-L5)
---%D=100*((K1+K2+K3)/3)
+--Stochastic
 function STOCHASTIC(Kperiod,slowing)
   local ExtMainBuffer={}
   local ExtLowesBuffer=LOWEST(LOW,Kperiod)
@@ -445,6 +444,7 @@ local out={}
 return out
 end
 
+--Double Exponential Moving Average
 function DEMA(source,period)
 local ema=EMA(source,period)
 for _=1,period-1,1 do table.remove(ema,1) end
@@ -456,6 +456,7 @@ local out={}
 return out
 end
 
+--Triple Exponential Moving Average
 function TEMA(source,period)
 local ema=EMA(source,period)
 for _=1,period-1,1 do table.remove(ema,1) end
@@ -479,6 +480,7 @@ local out={}
 return out
 end
 
+--Chaikin Oscillator
 function CHAIKIN(fast,slow)
 local ad=AD()
 local fastad=EMA(ad,fast)
@@ -791,7 +793,7 @@ FrAmaBuffer[1]=price[limit-1];
 return FrAmaBuffer
 end
 
---price channel
+--Price Channel
 function PCUP(period)
 local function iHighest( StartPos,  Depth)   
    local res=HIGH[StartPos];
@@ -833,7 +835,105 @@ local out={}
 return out
 end
 
+--Ichimoku Kinko Hyo
+-- Tenkan-sen
+function TENKAN(InpTenkan)
+local function iHighest( StartPos,  Depth)   
+   local res=HIGH[StartPos];
+   for i=StartPos-Depth+1,StartPos,1 do
+      if(HIGH[i]>res) then
+         res=HIGH[i]; end
+    end
+return(res);
+end
+local function iLowest( StartPos,  Depth)
+   local res=LOW[StartPos];
+   for i=StartPos-Depth+1,StartPos,1 do
+      if(LOW[i]<res) then
+         res=LOW[i]; end
+    end
+return(res);
+end 
 
+  local ExtTenkanBuffer={}
+  for i=InpTenkan+1 ,#CLOSE,1 do
+      local _high=iHighest(i,InpTenkan);
+      local _low=iLowest(i,InpTenkan);
+      ExtTenkanBuffer[i-InpTenkan]=(_high+_low)/2.0;
+  end
+return ExtTenkanBuffer
+end
+
+-- Kijun-sen
+function KIJUN(InpKijun)
+local function iHighest( StartPos,  Depth)   
+   local res=HIGH[StartPos];
+   for i=StartPos-Depth+1,StartPos,1 do
+      if(HIGH[i]>res) then
+         res=HIGH[i]; end
+    end
+return(res);
+end
+local function iLowest( StartPos,  Depth)
+   local res=LOW[StartPos];
+   for i=StartPos-Depth+1,StartPos,1 do
+      if(LOW[i]<res) then
+         res=LOW[i]; end
+    end
+return(res);
+end 
+
+  local ExtKijunBuffer={}
+  for i=InpKijun+1 ,#CLOSE,1 do
+      local _high=iHighest(i,InpKijun);
+      local _low=iLowest(i,InpKijun);
+      ExtKijunBuffer[i-InpKijun]=(_high+_low)/2.0;
+  end
+return ExtKijunBuffer
+end
+
+-- Senkou Span A
+function SPANA(InpTenkan,InpKijun)
+  
+  local ExtSpanABuffer={}
+  local ExtTenkanBuffer=TENKAN(InpTenkan)
+  local ExtKijunBuffer=KIJUN(InpKijun)
+  
+  local fark=InpKijun-InpTenkan
+  for i=1,#ExtKijunBuffer,1 do
+  ExtSpanABuffer[i]=(ExtTenkanBuffer[i+fark]+ExtKijunBuffer[i])/2.0;
+  end
+  
+return ExtSpanABuffer
+end
+
+-- Senkou Span B
+function SPANB(InpSenkou)
+local function iHighest( StartPos,  Depth)   
+   local res=HIGH[StartPos];
+   for i=StartPos-Depth+1,StartPos,1 do
+      if(HIGH[i]>res) then
+         res=HIGH[i]; end
+    end
+return(res);
+end
+local function iLowest( StartPos,  Depth)
+   local res=LOW[StartPos];
+   for i=StartPos-Depth+1,StartPos,1 do
+      if(LOW[i]<res) then
+         res=LOW[i]; end
+    end
+return(res);
+end 
+
+  local ExtSpanBBuffer={}
+  for i=InpSenkou+1 ,#CLOSE,1 do
+      local _high=iHighest(i,InpSenkou);
+      local _low=iLowest(i,InpSenkou);
+      ExtSpanBBuffer[i-InpSenkou]=(_high+_low)/2.0;
+  end
+return ExtSpanBBuffer
+end
 
 function CROSS(source,destination) 
 local cross={}
@@ -917,7 +1017,7 @@ WEIGHTED=WEIGHTEDCLOSE()
 
 --print(REPORT(BUY,SELL))
 
-for k, v in pairs(PCMID(22)) do
+for k, v in pairs(SPANA(9,26)) do
    print(k, v)
 end
 
