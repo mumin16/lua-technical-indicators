@@ -1,6 +1,6 @@
 	--global pricedata
-DATETIME={}; OPEN={}; HIGH={}; LOW={}; CLOSE={}; VOLUME={};	MEDIAN={}; TYPICAL={}; WEIGHTED={};
-BUY={};	SELL={};
+	OPEN = { };	HIGH = { };	LOW =  { };  CLOSE = { };	VOLUME = { };	MEDIAN = { };	TYPICAL = { };	WEIGHTED = { };
+BUY = { };	SELL = { };
 
 function MEDIANPRICE()
 local out={}
@@ -164,9 +164,7 @@ local out={}
 return out
 end
 
-function MOMENTUM(period,source)
-source=source or CLOSE
-period=period or 14
+function MOMENTUM(source,period)
 local out={}
   for  i=1,#source,1 do
     if i+period>#source then break else out[i] = (source[i+period]*100/ source[i] ) end
@@ -493,9 +491,7 @@ return out
 end
 
 --Rate of Change 
-function ROC(period,source)
-source=source or CLOSE
-period=period or 14
+function ROC(source,period)
 local out={}
   for  i=period+1 , #source,1 do
     out[i-period] = (source[i]-source[i-period])/source[i] * 100;
@@ -795,6 +791,50 @@ FrAmaBuffer[1]=price[limit-1];
 return FrAmaBuffer
 end
 
+--price channel
+function PCUP(period)
+local function iHighest( StartPos,  Depth)   
+   local res=HIGH[StartPos];
+   for i=StartPos-Depth+1,StartPos,1 do
+      if(HIGH[i]>res) then
+         res=HIGH[i]; end
+    end
+return(res);
+end
+local out={}
+  for i=period+1 ,#HIGH,1 do
+  out[i-period]=iHighest(i,period);
+  end
+return out
+end
+
+function PCDOWN(period)
+local function iLowest( StartPos,  Depth)
+   local res=LOW[StartPos];
+   for i=StartPos-Depth+1,StartPos,1 do
+      if(LOW[i]<res) then
+         res=LOW[i]; end
+    end
+return(res);
+end 
+local out={}
+  for i=period+1 ,#LOW,1 do
+  out[i-period]=iLowest(i,period);
+  end
+return out
+end
+function PCMID(period)
+local up=PCUP(period)
+local down=PCDOWN(period)
+local out={}
+   for i=1,#up,1 do
+     out[i]=(up[i]+down[i])/2
+    end
+return out
+end
+
+
+
 function CROSS(source,destination) 
 local cross={}
  
@@ -853,22 +893,22 @@ return toplamkz/ilkyatirim*100;
 end
 
 
---function write()
-----C:\\Users\\x64\\AppData\\Roaming\\MetaQuotes\\Terminal\\BB190E062770E27C3E79391AB0D1A117\\MQL4\\Files\\
---local i=1
---for line in io.lines("data.txt") do
---    local open, high, low, close, volume = line:match("%s*(.-),%s*(.-),%s*(.-),%s*(.-),%s*(.+)")
---    OPEN[i]=tonumber(open)
---    HIGH[i]=tonumber(high)
---    LOW[i]=tonumber(low)
---    CLOSE[i]=tonumber(close)
---    VOLUME[i]=tonumber(volume)
---    i=i+1
---end
+function write()
+--C:\\Users\\x64\\AppData\\Roaming\\MetaQuotes\\Terminal\\BB190E062770E27C3E79391AB0D1A117\\MQL4\\Files\\
+local i=1
+for line in io.lines("data.txt") do
+    local open, high, low, close, volume = line:match("%s*(.-),%s*(.-),%s*(.-),%s*(.-),%s*(.+)")
+    OPEN[i]=tonumber(open)
+    HIGH[i]=tonumber(high)
+    LOW[i]=tonumber(low)
+    CLOSE[i]=tonumber(close)
+    VOLUME[i]=tonumber(volume)
+    i=i+1
+end
 
---MEDIAN=MEDIANPRICE()
---TYPICAL=TYPICALPRICE()
---WEIGHTED=WEIGHTEDCLOSE()
+MEDIAN=MEDIANPRICE()
+TYPICAL=TYPICALPRICE()
+WEIGHTED=WEIGHTEDCLOSE()
 
 
 
@@ -877,12 +917,12 @@ end
 
 --print(REPORT(BUY,SELL))
 
---for k, v in pairs(BUY) do
---   print(k, v)
---end
+for k, v in pairs(PCMID(22)) do
+   print(k, v)
+end
 
 
 
---end
+end
 
---write()
+write()
