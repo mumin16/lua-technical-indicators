@@ -980,6 +980,35 @@ end
   end
 return out
 end
+
+
+--Variable Index Dynamic Average
+function VIDYA(price)
+local function CalculateCMO( Position,  PeriodCMO,  price)
+   local resCMO=0.0;
+   local UpSum=0.0 local DownSum=0.0;
+   if(Position>=PeriodCMO and ArrayRange(price,0)>Position) then     
+      for i=0,iPeriodCMO,1 do
+         local diff=price[Position-i]-price[Position-i-1];
+         if(diff>0.0) then UpSum=UpSum+diff;  else  DownSum=DownSum+(-diff); end        
+      end
+      if(UpSum+DownSum~=0.0) then resCMO=(UpSum-DownSum)/(UpSum+DownSum); end     
+   end
+   return(resCMO);
+end
+  
+--- main cycle
+local VIDYA_Buffer={}
+--- calculate smooth factor
+   local ExtF=2.0/(1.0+InpPeriodEMA);
+   for i=limit,#CLOSE,1 do
+      --- calculate CMO and get absolute value
+      local mulCMO=math.abs(CalculateCMO(i,InpPeriodCMO,price));
+      --- calculate VIDYA
+      VIDYA_Buffer[i]=price[i]*ExtF*mulCMO+VIDYA_Buffer[i-1]*(1-ExtF*mulCMO);
+   end  
+end
+
 function CROSS(source,destination) 
 local cross={}
  
