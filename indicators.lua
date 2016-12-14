@@ -945,6 +945,41 @@ end
 return ExtSpanBBuffer
 end
 
+--Aroon-Up = ((25 - Days Since 25-day High)/25) x 100
+--Aroon-Down = ((25 - Days Since 25-day Low)/25) x 100
+-- Aroon
+function AROONUP(period)
+local function HighestSince( StartPos,  Depth)   
+   local res=HIGH[StartPos-Depth+1]
+   local ago=Depth
+   for i=1,Depth,1 do
+     if HIGH[StartPos-Depth+i]>res then  res=HIGH[StartPos-Depth+i] ago=Depth-i end
+    end
+return(ago);
+end
+  local out={}
+  for i=period ,#CLOSE,1 do
+      local hsince=HighestSince(i,period);
+      out[i-period+1] = ((period - hsince)/period) * 100
+  end
+return out
+end
+function AROONDOWN(period)
+local function LowestSince( StartPos,  Depth)   
+   local res=LOW[StartPos-Depth+1]
+   local ago=Depth
+   for i=1,Depth,1 do
+     if LOW[StartPos-Depth+i]<res then  res=LOW[StartPos-Depth+i] ago=Depth-i end
+    end
+return(ago);
+end
+  local out={}
+  for i=period ,#CLOSE,1 do
+      local lsince=LowestSince(i,period);
+      out[i-period+1] = ((period - lsince)/period) * 100
+  end
+return out
+end
 function CROSS(source,destination) 
 local cross={}
  
@@ -1027,7 +1062,7 @@ WEIGHTED=WEIGHTEDCLOSE()
 
 --print(REPORT(BUY,SELL))
 
-for k, v in pairs(ROC(CLOSE,10)) do
+for k, v in pairs(AROONDOWN(14)) do
    print(k, v)
 end
 
