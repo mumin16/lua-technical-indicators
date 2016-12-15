@@ -170,6 +170,11 @@ return out
 end
 
 function MOMENTUM(source,period)
+if type(source)==type(1) then 
+  if source==0 then source=CLOSE elseif source==1 then source=OPEN elseif source==2 then source=HIGH 
+  elseif source==3 then source=LOW elseif source==4 then source=MEDIAN elseif source==5 then source=TYPICAL
+  elseif source==6 then source=WEIGHTED end
+end  
 local out={}
   for  i=1,#source,1 do
     if i+period>#source then break else out[i] = (source[i+period]*100/ source[i] ) end
@@ -1091,7 +1096,7 @@ WEIGHTED=WEIGHTEDCLOSE()
 
 --print(REPORT(BUY,SELL))
 
-for k, v in pairs(AROONDOWN(14)) do
+for k, v in pairs(ATR(14)) do
    print(k, v)
 end
 
