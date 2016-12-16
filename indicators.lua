@@ -1,10 +1,10 @@
-	--global pricedata
-	OPEN = { };	HIGH = { };	LOW =  { };  CLOSE = { };	VOLUME = { };	MEDIAN = { };	TYPICAL = { };	WEIGHTED = { };
+--global pricedata
+OPEN = { };	HIGH = { };	LOW =  { };  CLOSE = { };	VOLUME = { };	MEDIAN = { };	TYPICAL = { };	WEIGHTED = { };
 --APPLIED_PRICE
-
 PRICE_CLOSE=0 PRICE_OPEN=1 PRICE_HIGH=2 PRICE_LOW=3 PRICE_MEDIAN=4 PRICE_TYPICAL=5 PRICE_WEIGHTED=6
- 
-
+--MA_METHOD 
+MODE_SMA=0 MODE_EMA=1 MODE_SMMA=2 MODE_LWMA=3
+--test
 BUY = { };	SELL = { };
 
 function MEDIANPRICE()
@@ -154,6 +154,11 @@ return out
 end
 
 function BEARSPOWER(source,period)
+if type(source)==type(1) then 
+  if source==0 then source=CLOSE elseif source==1 then source=OPEN elseif source==2 then source=HIGH 
+  elseif source==3 then source=LOW elseif source==4 then source=MEDIAN elseif source==5 then source=TYPICAL
+  elseif source==6 then source=WEIGHTED end
+end    
 local out={}
     for  i=1,#source,1 do
       out[i]=LOW[i]-EMA(source,period)[i]
@@ -162,6 +167,11 @@ return out
 end
 
 function BULLSPOWER(source,period)
+if type(source)==type(1) then 
+  if source==0 then source=CLOSE elseif source==1 then source=OPEN elseif source==2 then source=HIGH 
+  elseif source==3 then source=LOW elseif source==4 then source=MEDIAN elseif source==5 then source=TYPICAL
+  elseif source==6 then source=WEIGHTED end
+end    
 local out={}
     for  i=1,#source,1 do
       out[i]=HIGH[i]-EMA(source,period)[i]
