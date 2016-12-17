@@ -585,18 +585,37 @@ function ASI(InpT)
 end
 
 --MASS INDEX
-function MI(ema1period,ema2period,massperiod)
-local hl={}
-  for  i=1 , #CLOSE,1 do
-    hl[i] = HIGH[i]-LOW[i]
+function MI(ExtPeriodEMA,ExtSecondPeriodEMA,ExtSumPeriod)
+local function ExponentialMA( position, period, prev_value, price)
+   local result=0.0;
+   if(period>0) then
+      local pr=2.0/(period+1.0);
+      result=price[position]*pr+prev_value*(1-pr);
+    end
+return(result);
+end
+local posMI=ExtSumPeriod+ExtPeriodEMA+ExtSecondPeriodEMA-3;
+local ExtHLBuffer={}
+ExtHLBuffer[1] = HIGH[1]-LOW[1]
+local ExtEHLBuffer={}
+ExtEHLBuffer[1] =0
+local ExtEEHLBuffer={}
+ExtEEHLBuffer[1] =0
+local ExtMIBuffer={}
+  for  i=2 , #CLOSE+1,1 do
+    if i>#CLOSE then ExtHLBuffer[i] = 0 else ExtHLBuffer[i] = HIGH[i]-LOW[i] end
+    ExtEHLBuffer[i]=ExponentialMA(i,ExtPeriodEMA,ExtEHLBuffer[i-1],ExtHLBuffer);
+    ExtEEHLBuffer[i]=ExponentialMA(i,ExtSecondPeriodEMA,ExtEEHLBuffer[i-1],ExtEHLBuffer);
+    local dTmp=0.0;
+    if i-1>posMI then 
+      for j=1,ExtSumPeriod,1 do--&& i>=posMI;j++)
+              dTmp=dTmp+ExtEHLBuffer[i-j]/ExtEEHLBuffer[i-j];
+      end        
+    end
+    ExtMIBuffer[i-1]=dTmp;
   end
-local ema=EMA(hl,ema1period)
-local emaofema=EMA(ema,ema2period)
-local ratio={}
-  for  j=1 , #emaofema,1 do
-    ratio[j] = ema[j]/emaofema[j] 
-  end
-return SUM(ratio,massperiod)
+
+return  ExtMIBuffer
 end 
 
 
@@ -1111,7 +1130,7 @@ WEIGHTED=WEIGHTEDCLOSE()
 
 --print(REPORT(BUY,SELL))
 
-for k, v in pairs(ATR(14)) do
+for k, v in pairs(MI(9,9,25)) do
    print(k, v)
 end
 
