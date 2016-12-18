@@ -1147,7 +1147,7 @@ function REPORT(buy,sell)
   
   --kapaportfoy
   if lastpos==1 then kapafiyat=CLOSE[#CLOSE]  print("kapa",CLOSE[#CLOSE]) print("K/Z",kapafiyat-alfiyat) 
-      toplamkz=toplamkz+satfiyat-alfiyat print(toplamkz) end
+      toplamkz=toplamkz+kapafiyat-alfiyat print(toplamkz) end
 
 return toplamkz/ilkyatirim*100;
 end
@@ -1172,14 +1172,14 @@ WEIGHTED=WEIGHTEDCLOSE()
 
 
 
---BUY=CROSS(MOMENTUM(CLOSE,25),100)
---SELL=CROSS(100,MOMENTUM(CLOSE,25))
+BUY=CROSS(MOMENTUM(PRICE_CLOSE,14),100)
+SELL=CROSS(100,MOMENTUM(PRICE_CLOSE,14))
 
---print(REPORT(BUY,SELL))
+print(REPORT(BUY,SELL))
 
-for k, v in pairs(VROC(25)) do
-   print(k, v)
-end
+--for k, v in pairs(SMA(PRICE_CLOSE,10)) do
+--   print(k, v)
+--end
 
 
 
