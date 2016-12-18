@@ -611,8 +611,9 @@ local ExtMIBuffer={}
       for j=1,ExtSumPeriod,1 do--&& i>=posMI;j++)
               dTmp=dTmp+ExtEHLBuffer[i-j]/ExtEEHLBuffer[i-j];
       end        
+      ExtMIBuffer[i-posMI-1]=dTmp;
     end
-    ExtMIBuffer[i-1]=dTmp;
+    
   end
 
 return  ExtMIBuffer
@@ -1022,14 +1023,19 @@ end
 
 
 --Variable Index Dynamic Average
-function VIDYA(price)
+function VIDYA(source,InpPeriodCMO,InpPeriodEMA)
+if type(source)==type(1) then 
+  if source==0 then source=CLOSE elseif source==1 then source=OPEN elseif source==2 then source=HIGH 
+  elseif source==3 then source=LOW elseif source==4 then source=MEDIAN elseif source==5 then source=TYPICAL
+  elseif source==6 then source=WEIGHTED end
+end    
 local function CalculateCMO( Position,  PeriodCMO,  price)
    local resCMO=0.0;
    local UpSum=0.0 local DownSum=0.0;
-   if(Position>=PeriodCMO and ArrayRange(price,0)>Position) then     
-      for i=0,iPeriodCMO,1 do
-         local diff=price[Position-i]-price[Position-i-1];
-         if(diff>0.0) then UpSum=UpSum+diff;  else  DownSum=DownSum+(-diff); end        
+   if Position>=PeriodCMO then --and ArrayRange(price,0)>Position then     
+      for i=0,PeriodCMO-1,1 do
+         local diff=source[Position-i]-price[Position-i-1];
+         if(diff>0.0) then UpSum=UpSum+diff;  else  DownSum=DownSum+-(diff); end        
       end
       if(UpSum+DownSum~=0.0) then resCMO=(UpSum-DownSum)/(UpSum+DownSum); end     
    end
@@ -1038,14 +1044,18 @@ end
   
 --- main cycle
 local VIDYA_Buffer={}
+for i=1,InpPeriodCMO+InpPeriodEMA-1,1 do
+VIDYA_Buffer[i]=CLOSE[i]
+end
 --- calculate smooth factor
    local ExtF=2.0/(1.0+InpPeriodEMA);
-   for i=limit,#CLOSE,1 do
+   for i=InpPeriodCMO+InpPeriodEMA,#CLOSE,1 do
       --- calculate CMO and get absolute value
-      local mulCMO=math.abs(CalculateCMO(i,InpPeriodCMO,price));
+      local mulCMO=math.abs(CalculateCMO(i,InpPeriodCMO,source));
       --- calculate VIDYA
-      VIDYA_Buffer[i]=price[i]*ExtF*mulCMO+VIDYA_Buffer[i-1]*(1-ExtF*mulCMO);
-   end  
+      VIDYA_Buffer[i]=source[i]*ExtF*mulCMO+VIDYA_Buffer[i-1]*(1-ExtF*mulCMO); 
+   end 
+return VIDYA_Buffer
 end
 
 function CROSS(source,destination) 
@@ -1130,7 +1140,7 @@ WEIGHTED=WEIGHTEDCLOSE()
 
 --print(REPORT(BUY,SELL))
 
-for k, v in pairs(MI(9,9,25)) do
+for k, v in pairs(VIDYA(PRICE_CLOSE,9,12)) do
    print(k, v)
 end
 
