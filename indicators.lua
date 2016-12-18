@@ -69,14 +69,24 @@ end
 
 --Simple Moving Avarage
 function SMA(source,period)
+if type(source)==type(1) then 
+  if source==0 then source=CLOSE elseif source==1 then source=OPEN elseif source==2 then source=HIGH 
+  elseif source==3 then source=LOW elseif source==4 then source=MEDIAN elseif source==5 then source=TYPICAL
+  elseif source==6 then source=WEIGHTED end
+end  
 local sum=SUM(source,period)
 local out={} 
   for j=1,#sum,1 do out[j] = sum[j]/period end
 return out
 end
 
---Weighted Moving Avarage
-function WMA(source,period)
+--Linear Weighted Moving Avarage
+function LWMA(source,period)
+if type(source)==type(1) then 
+  if source==0 then source=CLOSE elseif source==1 then source=OPEN elseif source==2 then source=HIGH 
+  elseif source==3 then source=LOW elseif source==4 then source=MEDIAN elseif source==5 then source=TYPICAL
+  elseif source==6 then source=WEIGHTED end
+end  
 local out={}
   for  i=1,#source-period+1,1 do
       local sum=0
@@ -92,6 +102,11 @@ end
 
 --Exponential Moving Avarage
 function EMA(source,period)
+if type(source)==type(1) then 
+  if source==0 then source=CLOSE elseif source==1 then source=OPEN elseif source==2 then source=HIGH 
+  elseif source==3 then source=LOW elseif source==4 then source=MEDIAN elseif source==5 then source=TYPICAL
+  elseif source==6 then source=WEIGHTED end
+end  
 local multiplier=(2 / (period + 1) ) 
 local out={}
   for  i=1,#source,1 do
@@ -102,6 +117,11 @@ end
 
 --Smoothed Moving Average
 function SMMA(source,period)
+if type(source)==type(1) then 
+  if source==0 then source=CLOSE elseif source==1 then source=OPEN elseif source==2 then source=HIGH 
+  elseif source==3 then source=LOW elseif source==4 then source=MEDIAN elseif source==5 then source=TYPICAL
+  elseif source==6 then source=WEIGHTED end
+end  
 local out={}
 local sma1=0
   for j=1,period,1 do
