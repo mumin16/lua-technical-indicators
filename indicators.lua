@@ -1058,6 +1058,23 @@ end
 return VIDYA_Buffer
 end
 
+--Volume Rate of Change
+function VROC(ExtPeriodVROC)
+local ExtVROCBuffer={}   
+   for i=ExtPeriodVROC,#CLOSE,1 do
+      -- getting some data
+      local PrevVolume=VOLUME[i-(ExtPeriodVROC-1)];
+      local CurrVolume=VOLUME[i];
+      --- fill ExtVROCBuffer
+      if(PrevVolume~=0.0) then
+         ExtVROCBuffer[i-ExtPeriodVROC+1]=100.0*(CurrVolume-PrevVolume)/PrevVolume;
+      else
+         ExtVROCBuffer[i-ExtPeriodVROC+1]=ExtVROCBuffer[i-1];
+      end
+   end
+return ExtVROCBuffer
+end
+
 function CROSS(source,destination) 
 local cross={}
  
@@ -1140,7 +1157,7 @@ WEIGHTED=WEIGHTEDCLOSE()
 
 --print(REPORT(BUY,SELL))
 
-for k, v in pairs(VIDYA(PRICE_CLOSE,9,12)) do
+for k, v in pairs(VROC(25)) do
    print(k, v)
 end
 
