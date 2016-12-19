@@ -1136,18 +1136,22 @@ function REPORT(buy,sell)
   local satfiyat=0--tl
   local kapafiyat=0--tl
   local toplamkz=0
-  print("RAPOR")
-  for i=1 ,#CLOSE,1 do
-   if buy[i]==1 and lastpos==0 
-      then lastpos=1 alfiyat=CLOSE[lendiffbuy+i] if satfiyat==0 then ilkyatirim=alfiyat end  print("al",CLOSE[lendiffbuy+i]) end
-   if sell[i]==1 and lastpos==1 
-      then lastpos=0 satfiyat=CLOSE[lendiffsell+i] 
-        print("sat",CLOSE[lendiffsell+i]) print("K/Z",satfiyat-alfiyat)  toplamkz=toplamkz+satfiyat-alfiyat print(toplamkz) end
+--print("RAPOR")
+for i=1 ,#CLOSE,1 do
+   if buy[i]==1 and lastpos==0 then 
+     lastpos=1 alfiyat=CLOSE[lendiffbuy+i] if satfiyat==0 then ilkyatirim=alfiyat end  --print("al",CLOSE[lendiffbuy+i]) 
+   end
+   if sell[i]==1 and lastpos==1 then 
+     lastpos=0 satfiyat=CLOSE[lendiffsell+i] 
+     --print("sat",CLOSE[lendiffsell+i]) print("K/Z",satfiyat-alfiyat)  
+     toplamkz=toplamkz+satfiyat-alfiyat --print(toplamkz) 
   end
+end
   
   --kapaportfoy
-  if lastpos==1 then kapafiyat=CLOSE[#CLOSE]  print("kapa",CLOSE[#CLOSE]) print("K/Z",kapafiyat-alfiyat) 
-      toplamkz=toplamkz+kapafiyat-alfiyat print(toplamkz) end
+  if lastpos==1 then kapafiyat=CLOSE[#CLOSE]  --print("kapa",CLOSE[#CLOSE]) print("K/Z",kapafiyat-alfiyat) 
+      toplamkz=toplamkz+kapafiyat-alfiyat --print(toplamkz) 
+  end
 
 return toplamkz/ilkyatirim*100;
 end
@@ -1171,18 +1175,18 @@ TYPICAL=TYPICALPRICE()
 WEIGHTED=WEIGHTEDCLOSE()
 
 
-
-BUY=CROSS(MOMENTUM(PRICE_CLOSE,14),100)
-SELL=CROSS(100,MOMENTUM(PRICE_CLOSE,14))
-
-print(REPORT(BUY,SELL))
-
---for k, v in pairs(SMA(PRICE_CLOSE,10)) do
---   print(k, v)
+--for OPT1=5,95,5 do
+--BUY=CROSS(MOMENTUM(PRICE_CLOSE,OPT1),100)
+--SELL=CROSS(100,MOMENTUM(PRICE_CLOSE,OPT1))
+--print(REPORT(BUY,SELL))
 --end
+
+for k, v in pairs(RVI(10)) do
+   print(k, v)
+end
 
 
 
 end
 
-write()
+--write()
