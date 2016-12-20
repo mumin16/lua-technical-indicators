@@ -388,6 +388,11 @@ return out
 end
 
 function MACD(source,fast,slow)
+if type(source)==type(1) then 
+  if source==0 then source=CLOSE elseif source==1 then source=OPEN elseif source==2 then source=HIGH 
+  elseif source==3 then source=LOW elseif source==4 then source=MEDIAN elseif source==5 then source=TYPICAL
+  elseif source==6 then source=WEIGHTED end
+end    
 local fastema=EMA(source,fast)
 local slowema=EMA(source,slow)
 local out={}
@@ -398,6 +403,11 @@ return out
 end
 
 function MACDSIGNAL(source,fast,slow,signal)
+if type(source)==type(1) then 
+  if source==0 then source=CLOSE elseif source==1 then source=OPEN elseif source==2 then source=HIGH 
+  elseif source==3 then source=LOW elseif source==4 then source=MEDIAN elseif source==5 then source=TYPICAL
+  elseif source==6 then source=WEIGHTED end
+end   
   return SMA(MACD(source,fast,slow),signal)
 end
 
@@ -1181,7 +1191,7 @@ WEIGHTED=WEIGHTEDCLOSE()
 --print(REPORT(BUY,SELL))
 --end
 
-for k, v in pairs(RVI(10)) do
+for k, v in pairs(AC()) do
    print(k, v)
 end
 
