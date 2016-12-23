@@ -183,28 +183,18 @@ local out={}
 return out
 end
 
-function BEARSPOWER(source,period)
-if type(source)==type(1) then 
-  if source==0 then source=CLOSE elseif source==1 then source=OPEN elseif source==2 then source=HIGH 
-  elseif source==3 then source=LOW elseif source==4 then source=MEDIAN elseif source==5 then source=TYPICAL
-  elseif source==6 then source=WEIGHTED end
-end    
+function BEARSPOWER(period)
 local out={}
-    for  i=1,#source,1 do
-      out[i]=LOW[i]-EMA(source,period)[i]
+    for  i=1,#CLOSE,1 do
+      out[i]=LOW[i]-EMA(CLOSE,period)[i]
     end
 return out
 end
 
-function BULLSPOWER(source,period)
-if type(source)==type(1) then 
-  if source==0 then source=CLOSE elseif source==1 then source=OPEN elseif source==2 then source=HIGH 
-  elseif source==3 then source=LOW elseif source==4 then source=MEDIAN elseif source==5 then source=TYPICAL
-  elseif source==6 then source=WEIGHTED end
-end    
+function BULLSPOWER(period)
 local out={}
-    for  i=1,#source,1 do
-      out[i]=HIGH[i]-EMA(source,period)[i]
+    for  i=1,#CLOSE,1 do
+      out[i]=HIGH[i]-EMA(CLOSE,period)[i]
     end
 return out
 end
@@ -271,6 +261,12 @@ end
 
 --Commodity Channel Index 
 function CCI(source,period)
+if type(source)==type(1) then 
+  if source==0 then source=CLOSE elseif source==1 then source=OPEN elseif source==2 then source=HIGH 
+  elseif source==3 then source=LOW elseif source==4 then source=MEDIAN elseif source==5 then source=TYPICAL
+  elseif source==6 then source=WEIGHTED end
+end    
+  
 local sma=SMA(source,period)
 
 local mean={}
@@ -546,13 +542,19 @@ return out
 end
 
 --Chaikin Oscillator
-function CHAIKIN(fast,slow)
+function CHAIKIN(fast,slow,matype)
 local ad=AD()
-local fastad=EMA(ad,fast)
-local slowad=EMA(ad,slow)
+--MODE_SMA=0 MODE_EMA=1 MODE_SMMA=2 MODE_LWMA=3
+local fastad={}
+local slowad={}
+if matype==0 then fastad= SMA(ad,fast) slowad= SMA(ad,slow) 
+elseif matype==1 then fastad= EMA(ad,fast) slowad= EMA(ad,slow)
+elseif matype==2 then fastad= SMMA(ad,fast) slowad= SMMA(ad,slow)
+elseif matype==3 then fastad= LWMA(ad,fast) slowad= LWMA(ad,slow) end
 local out={}
-  for  i=1,#slowad,1 do
-    out[i]=fastad[i]-slowad[i]
+local diff=#fastad-#slowad
+  for  i=diff+1,#slowad,1 do
+    out[i-diff]=fastad[i+diff]-slowad[i]
   end 
 return out
 end
@@ -813,7 +815,11 @@ end
   
 --Adaptive Moving Average
 function AMA(price,amaperiod,ExtFastPeriodEMA,ExtSlowPeriodEMA)
-  
+if type(price)==type(1) then 
+  if price==0 then price=CLOSE elseif price==1 then price=OPEN elseif price==2 then price=HIGH 
+  elseif price==3 then price=LOW elseif price==4 then price=MEDIAN elseif price==5 then price=TYPICAL
+  elseif price==6 then price=WEIGHTED end
+end    
 local function CalculateER(nPosition,PriceData,ExtPeriodAMA)
    local dSignal=math.abs(PriceData[nPosition]-PriceData[nPosition-ExtPeriodAMA]);
    local dNoise=0.0;
@@ -1201,7 +1207,7 @@ WEIGHTED=WEIGHTEDCLOSE()
 --print(REPORT(BUY,SELL))
 --end
 
-for k, v in pairs(AC()) do
+for k, v in pairs(CHAIKIN(3,10,MODE_EMA)) do
    print(k, v)
 end
 
@@ -1209,4 +1215,4 @@ end
 
 end
 
---write()
+write()
