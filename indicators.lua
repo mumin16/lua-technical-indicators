@@ -226,11 +226,21 @@ local out={}
 return out
 end
 
-function FORCE(source,period)
+function FORCE(source,period,matype)
+if type(source)==type(1) then 
+  if source==0 then source=CLOSE elseif source==1 then source=OPEN elseif source==2 then source=HIGH 
+  elseif source==3 then source=LOW elseif source==4 then source=MEDIAN elseif source==5 then source=TYPICAL
+  elseif source==6 then source=WEIGHTED end
+end   
+local sma={}
+if matype==0 then sma=SMA(source, period) 
+elseif matype==1 then sma= EMA(source, period)
+elseif matype==2 then sma= SMMA(source, period)
+elseif matype==3 then sma= LWMA(source, period) end
 local out={}
    for  i=1,#source-period+1,1 do
-     if i==1 then out[i]= VOLUME[i+period-1]*SMA(source,period)[i] 
-     else out[i]=VOLUME[i+period-1]*(SMA(source,period)[i]- SMA(source,period)[i-1]) end
+     if i==1 then out[i]= VOLUME[i+period-1]*sma[i] 
+     else out[i]=VOLUME[i+period-1]*(sma[i]- sma[i-1]) end
   end
 return out
 end
@@ -418,8 +428,18 @@ end
 end
 
 --Envelopes
-function ENVELOPESUPPER(source,period,deviation)
-local sma=SMA(source, period)
+function ENVELOPESUPPER(source,period,deviation,matype)
+if type(source)==type(1) then 
+  if source==0 then source=CLOSE elseif source==1 then source=OPEN elseif source==2 then source=HIGH 
+  elseif source==3 then source=LOW elseif source==4 then source=MEDIAN elseif source==5 then source=TYPICAL
+  elseif source==6 then source=WEIGHTED end
+end  
+local sma={}
+if matype==0 then sma=SMA(source, period) 
+elseif matype==1 then sma= EMA(source, period)
+elseif matype==2 then sma= SMMA(source, period)
+elseif matype==3 then sma= LWMA(source, period) end
+
 local out={}
   for  i=1,#sma,1 do
     out[i]=(1+deviation/100.0)*sma[i];
@@ -427,8 +447,17 @@ local out={}
 return out
 end
 
-function ENVELOPESLOWER(source,period,deviation)
-local sma=SMA(source, period)
+function ENVELOPESLOWER(source,period,deviation,matype)
+if type(source)==type(1) then 
+  if source==0 then source=CLOSE elseif source==1 then source=OPEN elseif source==2 then source=HIGH 
+  elseif source==3 then source=LOW elseif source==4 then source=MEDIAN elseif source==5 then source=TYPICAL
+  elseif source==6 then source=WEIGHTED end
+end    
+local sma={}
+if matype==0 then sma=SMA(source, period) 
+elseif matype==1 then sma= EMA(source, period)
+elseif matype==2 then sma= SMMA(source, period)
+elseif matype==3 then sma= LWMA(source, period) end
 local out={}
   for  i=1,#sma,1 do
     out[i]=(1-deviation/100.0)*sma[i];
@@ -507,6 +536,11 @@ end
 
 --Double Exponential Moving Average
 function DEMA(source,period)
+if type(source)==type(1) then 
+  if source==0 then source=CLOSE elseif source==1 then source=OPEN elseif source==2 then source=HIGH 
+  elseif source==3 then source=LOW elseif source==4 then source=MEDIAN elseif source==5 then source=TYPICAL
+  elseif source==6 then source=WEIGHTED end
+end    
 local ema=EMA(source,period)
 for _=1,period-1,1 do table.remove(ema,1) end
 local emaofema=EMA(ema,period)
@@ -534,6 +568,11 @@ end
 
 --Detrended Price Oscillator
 function DPO(source,period)
+if type(source)==type(1) then 
+  if source==0 then source=CLOSE elseif source==1 then source=OPEN elseif source==2 then source=HIGH 
+  elseif source==3 then source=LOW elseif source==4 then source=MEDIAN elseif source==5 then source=TYPICAL
+  elseif source==6 then source=WEIGHTED end
+end    
 local   ExtMAPeriod=period/2+1;
 local sma=SMA(source,ExtMAPeriod)
 local out={} 
@@ -797,15 +836,19 @@ return ExtADXBuffer
 end
 
 --Chaikin Volatility
-function CHV(ExtCHVPeriod,ExtSmoothPeriod)
+function CHV(ExtCHVPeriod,ExtSmoothPeriod,matype)
+local ExtSHLBuffer={}
+
 --- fill H-L(i) buffer 
     local ExtHLBuffer={}
     for i=1 ,#CLOSE,1 do ExtHLBuffer[i]=HIGH[i]-LOW[i] end
 --- calculate smoothed H-L(i) buffer
-     local ExtSHLBuffer= SMA(ExtHLBuffer,ExtSmoothPeriod);
+    if matype==0 then ExtSHLBuffer= SMA(ExtHLBuffer,ExtSmoothPeriod)
+    elseif matype==1 then ExtSHLBuffer= EMA(ExtHLBuffer,ExtSmoothPeriod) end
 --- calculate CHV buffer
     local ExtCHVBuffer={}
-    for i=1+ExtCHVPeriod ,#CLOSE-ExtCHVPeriod+1,1 do     
+    if ExtCHVPeriod>=ExtSmoothPeriod then limit=ExtCHVPeriod else limit=ExtSmoothPeriod end
+    for i=1+limit ,#CLOSE-limit+1,1 do     
         ExtCHVBuffer[i]=100.0*(ExtSHLBuffer[i]-ExtSHLBuffer[i-ExtCHVPeriod])/ExtSHLBuffer[i-ExtCHVPeriod];  
     end 
 return ExtCHVBuffer
@@ -849,6 +892,11 @@ end
 
 --Fractal Adaptive Moving Average
 function FAMA(price,InpPeriodFrAMA)
+if type(price)==type(1) then 
+  if price==0 then price=CLOSE elseif price==1 then price=OPEN elseif price==2 then price=HIGH 
+  elseif price==3 then price=LOW elseif price==4 then price=MEDIAN elseif price==5 then price=TYPICAL
+  elseif price==6 then price=WEIGHTED end
+end    
 local function iHighest( StartPos,  Depth)   
    local res=HIGH[StartPos];
    for i=StartPos-Depth+1,StartPos,1 do
@@ -1207,7 +1255,7 @@ WEIGHTED=WEIGHTEDCLOSE()
 --print(REPORT(BUY,SELL))
 --end
 
-for k, v in pairs(CHAIKIN(3,10,MODE_EMA)) do
+for k, v in pairs(FORCE(PRICE_CLOSE,26,MODE_SMA)) do
    print(k, v)
 end
 
