@@ -134,8 +134,17 @@ return out
 end
 
 --Standart Deviation
-function STDDEV(source,period)
-local sma=SMA(source,period)
+function STDDEV(source,period,matype)
+if type(source)==type(1) then 
+  if source==0 then source=CLOSE elseif source==1 then source=OPEN elseif source==2 then source=HIGH 
+  elseif source==3 then source=LOW elseif source==4 then source=MEDIAN elseif source==5 then source=TYPICAL
+  elseif source==6 then source=WEIGHTED end
+end   
+local sma={}
+if matype==0 then sma=SMA(source, period) 
+elseif matype==1 then sma= EMA(source, period)
+elseif matype==2 then sma= SMMA(source, period)
+elseif matype==3 then sma= LWMA(source, period) end
 local out={}
   for  i=1,#sma,1 do
       local sum=0
@@ -240,13 +249,18 @@ elseif matype==3 then sma= LWMA(source, period) end
 local out={}
    for  i=1,#source-period+1,1 do
      if i==1 then out[i]= VOLUME[i+period-1]*sma[i] 
-     else out[i]=VOLUME[i+period-1]*(sma[i]- sma[i-1]) end
+     else out[i-1]=VOLUME[i+period-1]*(sma[i]- sma[i-1]) end
   end
 return out
 end
 
 --On Balance Volume
 function OBV(source)
+if type(source)==type(1) then 
+  if source==0 then source=CLOSE elseif source==1 then source=OPEN elseif source==2 then source=HIGH 
+  elseif source==3 then source=LOW elseif source==4 then source=MEDIAN elseif source==5 then source=TYPICAL
+  elseif source==6 then source=WEIGHTED end
+end    
 local out={}
   for  i=1,#source,1 do
       if i==1 then out[i]=VOLUME[i] 
@@ -478,6 +492,11 @@ end
 
 --Moving Average of Oscillator indicator 
 function OSMA(source,fast_ema_period,slow_ema_period,signal_period)
+if type(source)==type(1) then 
+  if source==0 then source=CLOSE elseif source==1 then source=OPEN elseif source==2 then source=HIGH 
+  elseif source==3 then source=LOW elseif source==4 then source=MEDIAN elseif source==5 then source=TYPICAL
+  elseif source==6 then source=WEIGHTED end
+end    
 local macd=MACD(source,fast_ema_period,slow_ema_period)
 local signal=MACDSIGNAL(source,fast_ema_period,slow_ema_period,signal_period)
 local out={}   
@@ -514,8 +533,13 @@ function STOCHASTIC(Kperiod,slowing)
 return ExtMainBuffer  
 end
 
-function STOCHASTICSIGNAL(Kperiod,Dperiod,slowing)
-return SMA(STOCHASTIC(Kperiod,Dperiod,slowing),Dperiod)
+function STOCHASTICSIGNAL(Kperiod,Dperiod,slowing,matype)
+local sma={}
+if matype==0 then sma=SMA(STOCHASTIC(Kperiod,Dperiod,slowing),Dperiod)
+elseif matype==1 then sma= EMA(STOCHASTIC(Kperiod,Dperiod,slowing),Dperiod)
+elseif matype==2 then sma= SMMA(STOCHASTIC(Kperiod,Dperiod,slowing),Dperiod)
+elseif matype==3 then sma= LWMA(STOCHASTIC(Kperiod,Dperiod,slowing),Dperiod) end  
+return sma
 end
 
 
@@ -1255,7 +1279,7 @@ WEIGHTED=WEIGHTEDCLOSE()
 --print(REPORT(BUY,SELL))
 --end
 
-for k, v in pairs(FORCE(PRICE_CLOSE,26,MODE_SMA)) do
+for k, v in pairs(STDDEV(PRICE_CLOSE,20,MODE_SMMA)) do
    print(k, v)
 end
 
