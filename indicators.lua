@@ -1193,6 +1193,116 @@ local ExtVROCBuffer={}
 return ExtVROCBuffer
 end
 
+--Parabolic Sar
+function PSAR(ExtSarStep,ExtSarMaximum)
+local function GetHigh( nPosition, nStartPeriod, HiData)
+   --- calculate
+   local result=HiData[nStartPeriod];
+   for i=nStartPeriod,nPosition,1 do if(result<HiData[i]) then result=HiData[i] end end
+   return(result);
+end  
+local function GetLow( nPosition, nStartPeriod, LoData)
+   --- calculate
+   local result=LoData[nStartPeriod];
+   for i=nStartPeriod,nPosition,1 do if(result>LoData[i]) then result=LoData[i] end end
+   return(result);
+end   
+local ExtAFBuffer={}      
+local ExtSARBuffer={}  
+local ExtEPBuffer={}  
+      --- first pass, set as SHORT
+      pos=2;
+      ExtAFBuffer[1]=ExtSarStep;
+      ExtAFBuffer[2]=ExtSarStep;
+      ExtSARBuffer[1]=HIGH[1];
+      local ExtLastRevPos=1;
+      local ExtDirectionLong=false;
+      ExtSARBuffer[2]=GetHigh(pos,ExtLastRevPos,HIGH);
+      ExtEPBuffer[1]=LOW[pos];
+      ExtEPBuffer[2]=LOW[pos];
+      
+---main cycle
+for i=pos, #CLOSE-1,1 do
+     
+      --- check for reverse
+    if(ExtDirectionLong) then
+        
+         if(ExtSARBuffer[i]>LOW[i]) then
+            --- switch to SHORT
+            ExtDirectionLong=false;
+            ExtSARBuffer[i]=GetHigh(i,ExtLastRevPos,HIGH);
+            ExtEPBuffer[i]=LOW[i];
+            ExtLastRevPos=i;
+            ExtAFBuffer[i]=ExtSarStep;
+         end
+        
+    else
+        
+         if(ExtSARBuffer[i]<HIGH[i]) then
+            --- switch to LONG
+            ExtDirectionLong=true;
+            ExtSARBuffer[i]=GetLow(i,ExtLastRevPos,LOW);
+            ExtEPBuffer[i]=HIGH[i];
+            ExtLastRevPos=i;
+            ExtAFBuffer[i]=ExtSarStep;
+         end
+    end
+    
+      --- continue calculations
+      if(ExtDirectionLong) then
+        
+         --- check for new High
+         if(HIGH[i]>ExtEPBuffer[i-1] and i~=ExtLastRevPos) then
+           
+            ExtEPBuffer[i]=HIGH[i];
+            ExtAFBuffer[i]=ExtAFBuffer[i-1]+ExtSarStep;
+            if(ExtAFBuffer[i]>ExtSarMaximum) then
+               ExtAFBuffer[i]=ExtSarMaximum; end
+           
+         else
+           
+            --- when we haven't reversed
+            if(i~=ExtLastRevPos) then
+              
+               ExtAFBuffer[i]=ExtAFBuffer[i-1];
+               ExtEPBuffer[i]=ExtEPBuffer[i-1];
+             end
+         end
+         --- calculate SAR for tomorrow
+         ExtSARBuffer[i+1]=ExtSARBuffer[i]+ExtAFBuffer[i]*(ExtEPBuffer[i]-ExtSARBuffer[i]);
+         --- check for SAR
+         if(ExtSARBuffer[i+1]>LOW[i] or ExtSARBuffer[i+1]>LOW[i-1]) then
+            ExtSARBuffer[i+1]=math.min(LOW[i],LOW[i-1]); end
+        
+      else
+        
+         --- check for new Low
+         if(LOW[i]<ExtEPBuffer[i-1] and i~=ExtLastRevPos) then
+           
+            ExtEPBuffer[i]=LOW[i];
+            ExtAFBuffer[i]=ExtAFBuffer[i-1]+ExtSarStep;
+            if(ExtAFBuffer[i]>ExtSarMaximum) then
+               ExtAFBuffer[i]=ExtSarMaximum; end
+           
+         else
+           
+            --- when we haven't reversed
+            if(i~=ExtLastRevPos) then
+             
+               ExtAFBuffer[i]=ExtAFBuffer[i-1];
+               ExtEPBuffer[i]=ExtEPBuffer[i-1];
+             end
+          end 
+         --- calculate SAR for tomorrow
+         ExtSARBuffer[i+1]=ExtSARBuffer[i]+ExtAFBuffer[i]*(ExtEPBuffer[i]-ExtSARBuffer[i]);
+         --- check for SAR
+         if(ExtSARBuffer[i+1]<HIGH[i] or ExtSARBuffer[i+1]<HIGH[i-1]) then
+            ExtSARBuffer[i+1]=math.max(HIGH[i],HIGH[i-1]); end
+       end    
+end  
+return ExtSARBuffer
+end
+
 function CROSS(source,destination) 
 local cross={}
  
@@ -1279,7 +1389,7 @@ WEIGHTED=WEIGHTEDCLOSE()
 --print(REPORT(BUY,SELL))
 --end
 
-for k, v in pairs(STDDEV(PRICE_CLOSE,20,MODE_SMMA)) do
+for k, v in pairs(PSAR(0.02,0.2)) do
    print(k, v)
 end
 
