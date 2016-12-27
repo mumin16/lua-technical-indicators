@@ -383,7 +383,7 @@ local out={}
 return out
 end
 
-function RVISGINAL(period)
+function RVISIGNAL(period)
 local ExtRVIBuffer=RVI(period)
 local ExtSignalBuffer={}
    for i=4,#ExtRVIBuffer,1 do ExtSignalBuffer[i-3]=(ExtRVIBuffer[i]+2*ExtRVIBuffer[i-1]+2*ExtRVIBuffer[i-2]+ExtRVIBuffer[i-3])/6; end
@@ -1395,7 +1395,7 @@ WEIGHTED=WEIGHTEDCLOSE()
 --print(REPORT(BUY,SELL))
 --end
 
-for k, v in pairs(RVISGINAL(10)) do
+for k, v in pairs(PSAR(.02,.2)) do
    print(k, v)
 end
 
