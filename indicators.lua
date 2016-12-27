@@ -383,6 +383,12 @@ local out={}
 return out
 end
 
+function RVISGINAL(period)
+local ExtRVIBuffer=RVI(period)
+local ExtSignalBuffer={}
+   for i=4,#ExtRVIBuffer,1 do ExtSignalBuffer[i-3]=(ExtRVIBuffer[i]+2*ExtRVIBuffer[i-1]+2*ExtRVIBuffer[i-2]+ExtRVIBuffer[i-3])/6; end
+return ExtSignalBuffer
+end
 --Awesome Oscillator
 function AO()
 local sma5=SMA(MEDIAN,5)
@@ -1389,7 +1395,7 @@ WEIGHTED=WEIGHTEDCLOSE()
 --print(REPORT(BUY,SELL))
 --end
 
-for k, v in pairs(PSAR(0.02,0.2)) do
+for k, v in pairs(RVISGINAL(10)) do
    print(k, v)
 end
 
