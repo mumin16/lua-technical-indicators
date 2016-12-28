@@ -1309,6 +1309,60 @@ end
 return ExtSARBuffer
 end
 
+function ULTIMATE(InpFastPeriod,InpMiddlePeriod,InpSlowPeriod,InpFastK,InpMiddleK,InpSlowK)
+local function SimpleMA( position, period, price)
+   local result=0.0;
+   --- check position
+   if(position>=period-1 and period>0) then
+      --- calculate value
+      for i=1,period,1 do result=result+price[position-i]; end
+      result=result/period;
+   end
+   ---
+   return(result);
+end
+local ExtFastATRBuffer=ATR(InpFastPeriod)
+local ExtMiddleATRBuffer=ATR(InpMiddlePeriod)
+local ExtSlowATRBuffer=ATR(InpSlowPeriod)
+local ExtDivider=InpFastK+InpMiddleK+InpSlowK;
+      --- set empty value for first bar
+      local ExtBPBuffer={}
+      ExtBPBuffer[1]=0.0;
+      local ExtUOBuffer={}
+      ExtUOBuffer[1]=0.0;
+      --- set value for first InpSlowPeriod bars
+      for i=2,InpSlowPeriod,1 do
+         ExtUOBuffer[i]=0.0;
+         local TL=math.min(LOW[i],CLOSE[i-1]);
+         ExtBPBuffer[i]=CLOSE[i]-TL;
+      end
+      --- now we are going to calculate from limit index in main loop
+      local limit=InpSlowPeriod+2; 
+   --- the main loop of calculations
+   for i=limit,#CLOSE,1 do
+      --- TL is True Low
+      local TL=math.min(LOW[i],CLOSE[i-1]);
+      --- buying pressure
+      ExtBPBuffer[i]=CLOSE[i]-TL;
+      --- first we calculate "raw" value
+      if(ExtFastATRBuffer[i]~=0.0 and
+         ExtMiddleATRBuffer[i]~=0.0 and 
+         ExtSlowATRBuffer[i]~=0.0) then
+        
+         local RawUO=InpFastK*SimpleMA(i,InpFastPeriod,ExtBPBuffer)/ExtFastATRBuffer[i]+
+               InpMiddleK*SimpleMA(i,InpMiddlePeriod,ExtBPBuffer)/ExtMiddleATRBuffer[i]+
+               InpSlowK*SimpleMA(i,InpSlowPeriod,ExtBPBuffer)/ExtSlowATRBuffer[i];
+         --- now we can get current Ultimate value
+         ExtUOBuffer[i]=RawUO/ExtDivider*100;
+        
+      else
+         --- set current Ultimate value as previous Ultimate value
+         ExtUOBuffer[i]=ExtUOBuffer[i-1];
+        
+      end
+    end      
+return ExtUOBuffer
+end
 function CROSS(source,destination) 
 local cross={}
  
@@ -1395,7 +1449,7 @@ WEIGHTED=WEIGHTEDCLOSE()
 --print(REPORT(BUY,SELL))
 --end
 
-for k, v in pairs(PSAR(.02,.2)) do
+for k, v in pairs(ULTIMATE(7,14,28,4,2,1)) do
    print(k, v)
 end
 
