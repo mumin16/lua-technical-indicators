@@ -877,6 +877,7 @@ local ExtSHLBuffer={}
     elseif matype==1 then ExtSHLBuffer= EMA(ExtHLBuffer,ExtSmoothPeriod) end
 --- calculate CHV buffer
     local ExtCHVBuffer={}
+    local limit=0
     if ExtCHVPeriod>=ExtSmoothPeriod then limit=ExtCHVPeriod else limit=ExtSmoothPeriod end
     for i=1+limit ,#CLOSE-limit+1,1 do     
         ExtCHVBuffer[i]=100.0*(ExtSHLBuffer[i]-ExtSHLBuffer[i-ExtCHVPeriod])/ExtSHLBuffer[i-ExtCHVPeriod];  
@@ -1217,7 +1218,7 @@ local ExtAFBuffer={}
 local ExtSARBuffer={}  
 local ExtEPBuffer={}  
       --- first pass, set as SHORT
-      pos=2;
+      local pos=2;
       ExtAFBuffer[1]=ExtSarStep;
       ExtAFBuffer[2]=ExtSarStep;
       ExtSARBuffer[1]=HIGH[1];
@@ -1363,6 +1364,28 @@ local ExtDivider=InpFastK+InpMiddleK+InpSlowK;
     end      
 return ExtUOBuffer
 end
+
+--Chandelier Exit
+function CEXITLONG(period,mul)
+ --22-day High - ATR(22) x 3
+ local hhv=HIGHEST(HIGH,period)
+ local atr=ATR(period)
+ local out={}
+ for i=1,#atr,1 do
+   out[i]=hhv[i+period-1]-atr[i]*mul
+ end
+return out
+end
+
+function CEXITSHORT(period,mul)
+ local llv=LOWEST(LOW,period)
+ local atr=ATR(period)
+ local out={}
+ for i=1,#atr,1 do
+   out[i]=llv[i+period-1]+atr[i]*mul
+ end
+return out
+end
 function CROSS(source,destination) 
 local cross={}
  
@@ -1449,7 +1472,7 @@ WEIGHTED=WEIGHTEDCLOSE()
 --print(REPORT(BUY,SELL))
 --end
 
-for k, v in pairs(ULTIMATE(7,14,28,4,2,1)) do
+for k, v in pairs(CEXITSHORT(22,3)) do
    print(k, v)
 end
 
