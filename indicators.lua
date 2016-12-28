@@ -1366,23 +1366,23 @@ return ExtUOBuffer
 end
 
 --Chandelier Exit
-function CEXITLONG(period,mul)
+function CEXITLONG(period)
  --22-day High - ATR(22) x 3
  local hhv=HIGHEST(HIGH,period)
  local atr=ATR(period)
  local out={}
  for i=1,#atr,1 do
-   out[i]=hhv[i+period-1]-atr[i]*mul
+   out[i]=hhv[i+period-1]-atr[i]*3
  end
 return out
 end
 
-function CEXITSHORT(period,mul)
+function CEXITSHORT(period)
  local llv=LOWEST(LOW,period)
  local atr=ATR(period)
  local out={}
  for i=1,#atr,1 do
-   out[i]=llv[i+period-1]+atr[i]*mul
+   out[i]=llv[i+period-1]+atr[i]*3
  end
 return out
 end
@@ -1413,7 +1413,7 @@ return out
 end
 
 --Coppock Curve = 10-period WMA of 14-period RoC + 11-perod RoC
-function CCURVE(r1period,wperiod,r2period)
+function COPP(r1period,wperiod,r2period)
 local wmaroc=LWMA(ROC(CLOSE,r1period),wperiod)
 local roc2=ROC(CLOSE,r2period)
 local diff=#roc2-#wmaroc
@@ -1429,10 +1429,9 @@ function STOCHRSI(period)
 local rsi=RSI(PRICE_CLOSE,period)
 local llv=LOWEST(rsi,period)
 local hhv=HIGHEST(rsi,period)
-local diff=#rsi-#llv
 local out={}
-for i=1,#hhv,1 do
-  out[i]=(rsi[i+diff]-llv[i])/(hhv[i]-llv[i])
+for i=period,#hhv-period,1 do
+  out[i-period+1]=(rsi[i]-llv[i])/(hhv[i]-llv[i])
 end
 return out
 end
