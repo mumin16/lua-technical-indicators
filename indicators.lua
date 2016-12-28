@@ -1386,6 +1386,31 @@ function CEXITSHORT(period,mul)
  end
 return out
 end
+
+--Keltner Channels
+--Middle Line: 20-day exponential moving average 
+--Upper Channel Line: 20-day EMA + (2 x ATR(10))
+--Lower Channel Line: 20-day EMA - (2 x ATR(10))
+function KELTNERUP(price,period)
+local ema=EMA(price,period)
+local atr=ATR(period/2)
+ local out={}
+ local a=#ema-#atr
+ for i=1,#atr,1 do
+   out[i]=ema[i+a]+atr[i]*2
+ end
+return out
+end
+function KELTNERDOWN(price,period)
+local ema=EMA(price,period)
+local atr=ATR(period/2)
+ local out={}
+ local a=#ema-#atr
+ for i=1,#atr,1 do
+   out[i]=ema[i+a]-atr[i]*2
+ end
+return out
+end
 function CROSS(source,destination) 
 local cross={}
  
@@ -1472,7 +1497,7 @@ WEIGHTED=WEIGHTEDCLOSE()
 --print(REPORT(BUY,SELL))
 --end
 
-for k, v in pairs(CEXITSHORT(22,3)) do
+for k, v in pairs(KELTNERUP(PRICE_CLOSE,14)) do
    print(k, v)
 end
 
