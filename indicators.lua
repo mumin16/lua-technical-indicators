@@ -1411,6 +1411,32 @@ local atr=ATR(period/2)
  end
 return out
 end
+
+--Coppock Curve = 10-period WMA of 14-period RoC + 11-perod RoC
+function CCURVE(r1period,wperiod,r2period)
+local wmaroc=LWMA(ROC(CLOSE,r1period),wperiod)
+local roc2=ROC(CLOSE,r2period)
+local diff=#roc2-#wmaroc
+local out={}
+for i=1,#wmaroc,1 do
+  out[i]=wmaroc[i]+roc2[i+diff]
+end
+return out
+end
+
+--StochRSI = (RSI - Lowest Low RSI) / (Highest High RSI - Lowest Low RSI)
+function STOCHRSI(period)
+local rsi=RSI(PRICE_CLOSE,period)
+local llv=LOWEST(rsi,period)
+local hhv=HIGHEST(rsi,period)
+local diff=#rsi-#llv
+local out={}
+for i=1,#hhv,1 do
+  out[i]=(rsi[i+diff]-llv[i])/(hhv[i]-llv[i])
+end
+return out
+end
+
 function CROSS(source,destination) 
 local cross={}
  
@@ -1497,7 +1523,7 @@ WEIGHTED=WEIGHTEDCLOSE()
 --print(REPORT(BUY,SELL))
 --end
 
-for k, v in pairs(KELTNERUP(PRICE_CLOSE,14)) do
+for k, v in pairs(STOCHRSI(14)) do
    print(k, v)
 end
 
