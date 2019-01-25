@@ -1,0 +1,21 @@
+SEPARATEWINDOW=true
+INPUTS={ "FastPeriod,7",
+         "MiddlePeriod,14",
+          "SlowPeriod,28",
+          "FastK,4",
+          "MiddleK,2",
+          "SlowK,1"}
+BUFFERSNAME={"UO"}
+BUFFERSCOLOR={ClrGreen}
+BUFFERSTYPE={DRAW_LINE}
+LEVELS={30,70}
+DESCRIPTION={"2019 HPK"}
+
+function calc()
+UO=UltimateOsc(FastPeriod,MiddlePeriod,SlowPeriod,FastK,MiddleK,SlowK)
+end
+
+
+
+
+

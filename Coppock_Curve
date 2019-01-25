@@ -1,0 +1,20 @@
+SEPARATEWINDOW=true
+INPUTS={"longRoC,14",
+        "shortRoC,11",
+         "wmaPeriod,10"}
+BUFFERSNAME={"copp"}
+BUFFERSCOLOR={ClrGreen}
+BUFFERSTYPE={DRAW_HISTOGRAM}
+LEVELS={0}
+DESCRIPTION={"2019 HPK"}
+
+function calc()
+  copp=COPP(longRoC,shortRoC,wmaPeriod)
+end
+
+
+
+
+
+
+

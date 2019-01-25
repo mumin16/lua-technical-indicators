@@ -1,0 +1,16 @@
+SEPARATEWINDOW=true
+INPUTS={ "period,25"}
+BUFFERSNAME={"vroc"}
+BUFFERSCOLOR={ClrGreen}
+BUFFERSTYPE={DRAW_LINE}
+LEVELS={0}
+DESCRIPTION={"Volume Rate of Change"}
+
+function calc()
+  vroc=VROC(period)
+end
+
+
+
+
+

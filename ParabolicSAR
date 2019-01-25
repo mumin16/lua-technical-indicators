@@ -1,0 +1,16 @@
+SEPARATEWINDOW=false
+INPUTS={ "SarStep,0.02",
+         "SarMaximum,0.2"}
+BUFFERSNAME={"psar"}
+BUFFERSCOLOR={ClrGreen}
+BUFFERSTYPE={DRAW_POINT}
+DESCRIPTION={"2019 HPK"}
+
+function calc()
+  psar=PSAR(SarStep,SarMaximum)
+end
+
+
+
+
+

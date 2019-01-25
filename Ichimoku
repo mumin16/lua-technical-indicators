@@ -1,0 +1,64 @@
+SEPARATEWINDOW=false
+INPUTS={ "InpTenkan,9",
+				  "InpKijun,26",
+				  "InpSenkou,52"}
+BUFFERSNAME={"ExtTenkanBuffer","ExtKijunBuffer","ExtSpanABuffer","ExtSpanBBuffer","ExtChikouBuffer"}
+BUFFERSSHIFT={0,0,0,0,0}
+BUFFERSCOLOR={ClrRed,ClrBlue,ClrBrown,ClrLavender,ClrGreen}
+BUFFERSTYPE={DRAW_LINE,DRAW_LINE,DRAW_LINE,DRAW_LINE,DRAW_LINE}
+DESCRIPTION={"Ichimoku Kinko Hyo"}
+
+
+local function Highest(array, range, fromIndex)
+   res=array[fromIndex];
+   for  i=fromIndex,1, -1 do
+      if (i>fromIndex-range) then if(res<array[i]) then res=array[i] end end
+   end
+return(res);
+end
+
+local function Lowest(array, range, fromIndex)
+   res=array[fromIndex];
+   for i=fromIndex,1,-1 do
+      if (i>fromIndex-range) then if(res>array[i]) then res=array[i] end end
+    end
+return(res);
+end
+
+function calc()
+BUFFERSSHIFT[5]=-InpKijun
+BUFFERSSHIFT[3]=InpKijun BUFFERSSHIFT[4]=InpKijun
+-- indicator buffers
+ExtTenkanBuffer={} ExtKijunBuffer={} ExtSpanABuffer={}  ExtSpanBBuffer={} ExtChikouBuffer={}
+
+
+   for i=1, #CLOSE,1 do
+      ExtChikouBuffer[i]=CLOSE[i];
+      -- tenkan sen
+      _high=Highest(HIGH,InpTenkan,i);
+      _low=Lowest(LOW,InpTenkan,i);
+      ExtTenkanBuffer[i]=(_high+_low)/2.0;
+      -- kijun sen
+      _high=Highest(HIGH,InpKijun,i);
+      _low=Lowest(LOW,InpKijun,i);
+      ExtKijunBuffer[i]=(_high+_low)/2.0;
+      -- senkou span a
+      ExtSpanABuffer[i]=(ExtTenkanBuffer[i]+ExtKijunBuffer[i])/2.0;
+      -- senkou span b
+      _high=Highest(HIGH,InpSenkou,i);
+      _low=Lowest(LOW,InpSenkou,i);
+      ExtSpanBBuffer[i]=(_high+_low)/2.0;
+   end
+     
+end
+    
+
+    
+
+
+
+
+
+   
+
+   

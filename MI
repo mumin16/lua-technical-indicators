@@ -1,0 +1,17 @@
+SEPARATEWINDOW=true
+INPUTS={ "ema1,9",
+         "ema2,9",
+          "massperiod,25"}
+BUFFERSNAME={"mass"}
+BUFFERSCOLOR={ClrGreen}
+BUFFERSTYPE={DRAW_LINE}
+LEVELS={27,26.5}
+DESCRIPTION={"Mass Index"}
+
+function calc()
+  mass=MI(ema1,ema2,massperiod)
+end
+
+
+
+

@@ -1,0 +1,17 @@
+SEPARATEWINDOW=true
+INPUTS={ "period,12",
+          "pricetype,0"}
+BUFFERSNAME={"dpo"}
+BUFFERSCOLOR={ClrGreen}
+BUFFERSTYPE={DRAW_LINE}
+LEVELS={0}
+DESCRIPTION={"Detrended Price Oscillator - pricetype can be CLOSE=0 OPEN=1 HIGH=2 LOW=3 MEDIAN=4 TYPICAL=5 WEIGHTED=6"}
+
+function calc()
+  dpo=DPO(pricetype,period)
+end
+
+
+
+
+

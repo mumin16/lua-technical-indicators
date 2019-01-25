@@ -1,0 +1,14 @@
+SEPARATEWINDOW=true
+BUFFERSNAME={"ad"}
+BUFFERSCOLOR={ClrGreen}
+BUFFERSTYPE={DRAW_LINE}
+DESCRIPTION={"Accumulation/Distribution"}
+
+function calc()
+  ad=AD()
+end
+
+
+
+
+

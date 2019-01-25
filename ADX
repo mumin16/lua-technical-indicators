@@ -1,0 +1,17 @@
+SEPARATEWINDOW=true
+INPUTS={"Period,14"}
+BUFFERSNAME={"adx","pdi","mdi"}
+BUFFERSCOLOR={ClrBlue,ClrGreen,ClrRed}
+BUFFERSTYPE={DRAW_LINE,DRAW_LINE,DRAW_LINE}
+DESCRIPTION={"Average Directional Movement Index"}
+
+function calc()
+  adx=ADX(Period)
+  pdi=PLUSDI(Period)
+  mdi=MINUSDI(Period)
+end
+
+
+
+
+

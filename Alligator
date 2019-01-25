@@ -1,0 +1,45 @@
+SEPARATEWINDOW=false
+INPUTS={ "InpJawsPeriod,13",
+         "InpJawsShift,8",
+          "InpTeethPeriod,8",
+          "InpTeethShift,5",
+          "InpLipsPeriod,5",
+          "InpLipsShift,3",
+          "matype,2",
+          "pricetype,4"}
+BUFFERSNAME={"Jaws","Teeth","Lips"}
+BUFFERSSHIFT={8,5,3}
+BUFFERSCOLOR={ClrBlue,ClrRed,ClrGreen}
+BUFFERSTYPE={DRAW_LINE,DRAW_LINE,DRAW_LINE}
+DESCRIPTION={"pricetype can be CLOSE=0 OPEN=1 HIGH=2 LOW=3 MEDIAN=4 TYPICAL=5 WEIGHTED=6 - matype can be sma=0 ema=1 smma=2 lwma=3"}
+
+function calc()
+if matype==0 then
+	Jaws=SMA(pricetype,InpJawsPeriod)
+	Teeth=SMA(pricetype,InpTeethPeriod)
+	Lips=SMA(pricetype,InpLipsPeriod)
+end	
+
+if matype==1 then
+	Jaws=EMA(pricetype,InpJawsPeriod)
+	Teeth=EMA(pricetype,InpTeethPeriod)
+	Lips=EMA(pricetype,InpLipsPeriod)
+end
+
+if matype==2 then
+	Jaws=SMMA(pricetype,InpJawsPeriod)
+	Teeth=SMMA(pricetype,InpTeethPeriod)
+	Lips=SMMA(pricetype,InpLipsPeriod)
+end
+
+if matype==3 then
+	Jaws=LWMA(pricetype,InpJawsPeriod)
+	Teeth=LWMA(pricetype,InpTeethPeriod)
+	Lips=LWMA(pricetype,InpLipsPeriod)
+end
+end
+
+
+
+
+

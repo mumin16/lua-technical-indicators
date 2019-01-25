@@ -1,0 +1,16 @@
+SEPARATEWINDOW=true
+INPUTS={ "period,14"}
+BUFFERSNAME={"aroonup","aroondown"}
+BUFFERSCOLOR={ClrGreen,ClrRed}
+BUFFERSTYPE={DRAW_LINE,DRAW_LINE}
+DESCRIPTION={"2019 HPK"}
+
+function calc()
+  aroonup=AROONUP(period)
+  aroondown=AROONDOWN(period)
+end
+
+
+
+
+

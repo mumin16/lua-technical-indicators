@@ -1,0 +1,17 @@
+SEPARATEWINDOW=false
+INPUTS={ "cmoperiod,9",
+         "emaperiod,12",
+          "pricetype,0"}
+BUFFERSNAME={"vidya"}
+BUFFERSCOLOR={ClrGreen}
+BUFFERSTYPE={DRAW_LINE}
+DESCRIPTION={"Variable Index Dynamic Average - pricetype can be CLOSE=0 OPEN=1 HIGH=2 LOW=3 MEDIAN=4 TYPICAL=5 WEIGHTED=6"}
+
+function calc()
+  vidya=VIDYA(pricetype,cmoperiod,emaperiod)
+end
+
+
+
+
+

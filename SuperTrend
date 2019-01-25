@@ -1,0 +1,15 @@
+SEPARATEWINDOW=false
+INPUTS={ "Period,10",
+         "Multiplier,3"}
+BUFFERSNAME={"supertrend"}
+BUFFERSCOLOR={ClrBlue}
+BUFFERSTYPE={DRAW_LINE}
+DESCRIPTION={"2019 HPK"}
+
+function calc()
+  supertrend=SUPERTREND(Period, Multiplier)
+end
+
+
+
+

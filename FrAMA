@@ -1,0 +1,16 @@
+SEPARATEWINDOW=false
+INPUTS={ "period,14",
+          "pricetype,0"}
+BUFFERSNAME={"fama"}
+BUFFERSCOLOR={ClrGreen}
+BUFFERSTYPE={DRAW_LINE}
+DESCRIPTION={"Fractal Adaptive Moving Average - pricetype can be CLOSE=0 OPEN=1 HIGH=2 LOW=3 MEDIAN=4 TYPICAL=5 WEIGHTED=6"}
+
+function calc()
+  fama=FAMA(pricetype,period)
+end
+
+
+
+
+

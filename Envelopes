@@ -1,0 +1,19 @@
+SEPARATEWINDOW=false
+INPUTS={ "period,14",
+         "Devition,0.1",
+          "pricetype,0",
+          "matype,0"}
+BUFFERSNAME={"envup","envlow"}
+BUFFERSCOLOR={ClrGreen,ClrRed}
+BUFFERSTYPE={DRAW_LINE,DRAW_LINE}
+DESCRIPTION={"pricetype can be CLOSE=0 OPEN=1 HIGH=2 LOW=3 MEDIAN=4 TYPICAL=5 WEIGHTED=6 \n matype can be Sma=0 Ema=1 Smma=2 Lwma=3"}
+
+function calc()
+  envup=ENVELOPESUPPER(pricetype,period,Devition,matype)
+  envlow=ENVELOPESLOWER(pricetype,period,Devition,matype)
+end
+
+
+
+
+

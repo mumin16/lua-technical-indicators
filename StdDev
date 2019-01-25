@@ -1,0 +1,17 @@
+SEPARATEWINDOW=true
+INPUTS={"period,20",
+        "pricetype,0",
+         "matype,0"}
+BUFFERSNAME={"stddev"}
+BUFFERSCOLOR={ClrGreen}
+BUFFERSTYPE={DRAW_LINE}
+DESCRIPTION={"Standard Deviation - pricetype can be CLOSE=0 OPEN=1 HIGH=2 LOW=3 MEDIAN=4 TYPICAL=5 WEIGHTED=6 - matype can be Sma=0 Ema=1 Smma=2 Lwma=3"}
+
+function calc()
+  stddev=STDDEV(pricetype,period,matype)
+end
+
+
+
+
+

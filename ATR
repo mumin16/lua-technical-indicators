@@ -1,0 +1,15 @@
+SEPARATEWINDOW=true
+INPUTS={ "period,14"}
+BUFFERSNAME={"atr"}
+BUFFERSCOLOR={ClrGreen}
+BUFFERSTYPE={DRAW_LINE}
+DESCRIPTION={"Average True Range"}
+
+function calc()
+  atr=ATR(period)
+end
+
+
+
+
+

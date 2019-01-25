@@ -1,0 +1,17 @@
+SEPARATEWINDOW=false
+INPUTS={ "Depth,21",
+         "Deviation,5",
+          "Backstep,3"}
+BUFFERSNAME={"zigzag"}
+BUFFERSCOLOR={ClrOrange}
+BUFFERSTYPE={DRAW_SECTION}
+DESCRIPTION={"2019 HPK"}
+
+function calc()
+  zigzag=ZIGZAG(Depth,Deviation,Backstep)
+end
+
+
+
+
+		

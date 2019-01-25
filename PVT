@@ -1,0 +1,14 @@
+SEPARATEWINDOW=true
+BUFFERSNAME={"pvt"}
+BUFFERSCOLOR={ClrGreen}
+BUFFERSTYPE={DRAW_LINE}
+DESCRIPTION={"Price and Volume Trend"}
+
+function calc()
+  pvt=PVT()
+end
+
+
+
+
+

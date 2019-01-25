@@ -1,0 +1,14 @@
+SEPARATEWINDOW=true
+BUFFERSNAME={"ac"}
+BUFFERSCOLOR={"color"}
+BUFFERSTYPE={DRAW_COLOREDHISTOGRAM}
+DESCRIPTION={"Accelerator/Decelerator"}
+
+function calc()
+  ac,color=AC()
+end
+
+
+
+
+

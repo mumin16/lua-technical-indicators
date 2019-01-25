@@ -1,0 +1,109 @@
+SEPARATEWINDOW=true
+INPUTS={"ADXWPeriod,14"}
+BUFFERSNAME={"ADXWBuffer","PDIBuffer","NDIBuffer"}
+BUFFERSCOLOR={ClrBlue,ClrGreen,ClrRed}
+BUFFERSTYPE={DRAW_LINE,DRAW_LINE,DRAW_LINE}
+DESCRIPTION={"Average Directional Movement Index by Welles Wilder"}
+
+local function SmoothedMA(position, period, prev_value, price)
+
+--
+   result=0.0;
+-- check position
+   if(period>0) then
+      if(position==period-1) then
+         for i=0,period-2,1 do result=result+price[position-i]; end
+         result=result/period;
+      end
+      if(position>=period) then 
+         result=(prev_value*(period-1)+price[position])/period; end
+   end
+--
+   return(result);
+end
+
+function calc()
+
+
+
+         ADXWBuffer={}
+         PDIBuffer={}
+         NDIBuffer={}
+         local ExtPDSBuffer={}
+         local ExtNDSBuffer={}
+         local ExtPDBuffer={}
+         local ExtNDBuffer={}
+         local ExtTRBuffer={}
+         local ExtATRBuffer={}
+         local ExtDXBuffer={}
+         
+      for i=1,ADXWPeriod,1 do
+         ADXWBuffer[i]=0
+         PDIBuffer[i]=0
+         NDIBuffer[i]=0
+         ExtPDSBuffer[i]=0
+         ExtNDSBuffer[i]=0
+         ExtPDBuffer[i]=0
+         ExtNDBuffer[i]=0
+         ExtTRBuffer[i]=0
+         ExtATRBuffer[i]=0
+         ExtDXBuffer[i]=0
+      end
+ -- main cycle
+   for i=2,#CLOSE,1 do
+      -- get some data
+       Hi    =HIGH[i]
+       prevHi=HIGH[i-1]
+       Lo    =LOW[i]
+       prevLo=LOW[i-1]
+       prevCl=CLOSE[i-1]
+      -- fill main positive and main negative buffers
+       dTmpP=Hi-prevHi;
+       dTmpN=prevLo-Lo;
+      if(dTmpP<0.0) then dTmpP=0.0 end
+      if(dTmpN<0.0) then dTmpN=0.0 end
+      if(dTmpN==dTmpP) then
+         dTmpN=0.0;
+         dTmpP=0.0;
+      else
+         if(dTmpP<dTmpN) then dTmpP=0.0 
+         else  dTmpN=0.0 end
+      end
+      ExtPDBuffer[i]=dTmpP;
+      ExtNDBuffer[i]=dTmpN;
+      -- define TR
+       tr=math.max(math.max(math.abs(Hi-Lo),math.abs(Hi-prevCl)),math.abs(Lo-prevCl));
+      -- write down TR to TR buffer
+      ExtTRBuffer[i]=tr;
+      -- fill smoothed positive and negative buffers and TR buffer
+      if(i<ADXWPeriod) then
+         ExtATRBuffer[i]=0.0;
+         PDIBuffer[i]=0.0;
+         NDIBuffer[i]=0.0;
+      else
+         ExtATRBuffer[i]=SmoothedMA(i,ADXWPeriod,ExtATRBuffer[i-1],ExtTRBuffer);
+         ExtPDSBuffer[i]=SmoothedMA(i,ADXWPeriod,ExtPDSBuffer[i-1],ExtPDBuffer);
+         ExtNDSBuffer[i]=SmoothedMA(i,ADXWPeriod,ExtNDSBuffer[i-1],ExtNDBuffer);
+       end
+      -- calculate PDI and NDI buffers
+      if(ExtATRBuffer[i]~=0.0) then
+         PDIBuffer[i]=100.0*ExtPDSBuffer[i]/ExtATRBuffer[i];
+         NDIBuffer[i]=100.0*ExtNDSBuffer[i]/ExtATRBuffer[i];
+      else
+         PDIBuffer[i]=0.0;
+         NDIBuffer[i]=0.0;
+       end
+      -- Calculate DX buffer
+      dTmp=PDIBuffer[i]+NDIBuffer[i];
+      if(dTmp~=0.0) then dTmp=100.0*math.abs((PDIBuffer[i]-NDIBuffer[i])/dTmp);
+      else          dTmp=0.0 end
+      ExtDXBuffer[i]=dTmp;
+      -- fill ADXW buffer as smoothed DX buffer
+      ADXWBuffer[i]=SmoothedMA(i,ADXWPeriod,ADXWBuffer[i-1],ExtDXBuffer);
+    end
+end
+
+
+
+
+

@@ -1,0 +1,15 @@
+SEPARATEWINDOW=true
+INPUTS={ "period,13"}
+BUFFERSNAME={"bullspower"}
+BUFFERSCOLOR={ClrGreen}
+BUFFERSTYPE={DRAW_HISTOGRAM}
+DESCRIPTION={"Bulls Power"}
+
+function calc()
+  bullspower=BULLSPOWER(period)
+end
+
+
+
+
+

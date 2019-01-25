@@ -1,0 +1,18 @@
+SEPARATEWINDOW=true
+INPUTS={ "period,10",
+         "SmoothPeriod,10",
+         "matype,1"}
+BUFFERSNAME={"chv"}
+BUFFERSCOLOR={ClrGreen}
+BUFFERSTYPE={DRAW_LINE}
+LEVELS={0}
+DESCRIPTION={"Chaikin Volatility - matype can be sma=0 ema=1"}
+
+function calc()
+  chv=CHV(period,SmoothPeriod,matype)
+end
+
+
+
+
+

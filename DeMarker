@@ -1,0 +1,16 @@
+SEPARATEWINDOW=true
+INPUTS={ "period,14"}
+BUFFERSNAME={"demarker"}
+BUFFERSCOLOR={ClrGreen}
+BUFFERSTYPE={DRAW_LINE}
+LEVELS={0.3,0.7}
+DESCRIPTION={"2019 HPK"}
+
+function calc()
+  demarker=DEMARKER(period)
+end
+
+
+
+
+

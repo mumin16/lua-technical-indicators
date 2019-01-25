@@ -1,0 +1,14 @@
+SEPARATEWINDOW=true
+BUFFERSNAME={"ao"}
+BUFFERSCOLOR={"color"}
+BUFFERSTYPE={DRAW_COLOREDHISTOGRAM}
+DESCRIPTION={"2019 HPK"}
+
+function calc()
+  ao,color=AO()
+end
+
+
+
+
+

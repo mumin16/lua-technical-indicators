@@ -1,0 +1,14 @@
+SEPARATEWINDOW=true
+BUFFERSNAME={"w_ad"}
+BUFFERSCOLOR={ClrGreen}
+BUFFERSTYPE={DRAW_LINE}
+DESCRIPTION={"Larry Williams' Accumulation/Distribution"}
+
+function calc()
+  w_ad=W_AD()
+end
+
+
+
+
+

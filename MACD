@@ -1,0 +1,19 @@
+SEPARATEWINDOW=true
+INPUTS={"fastema,12",
+        "slowema,26",
+        "macdsma,9",
+        "pricetype,0"}
+BUFFERSNAME={"macd","signal"}
+BUFFERSCOLOR={ClrGreen,ClrRed}
+BUFFERSTYPE={DRAW_HISTOGRAM,DRAW_LINE}
+DESCRIPTION={"pricetype can be CLOSE=0 OPEN=1 HIGH=2 LOW=3 MEDIAN=4 TYPICAL=5 WEIGHTED=6"}
+
+function calc()
+  macd=MACD(pricetype,fastema,slowema)
+  signal=MACDSIGNAL(pricetype,fastema,slowema,macdsma)
+end
+
+
+
+
+

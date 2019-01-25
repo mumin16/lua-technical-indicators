@@ -1,0 +1,17 @@
+SEPARATEWINDOW=true
+INPUTS={ "period,10"}
+BUFFERSNAME={"rvi","rvisignal"}
+BUFFERSCOLOR={ClrGreen,ClrRed}
+BUFFERSTYPE={DRAW_LINE,DRAW_LINE}
+LEVELS={0}
+DESCRIPTION={"Relative Vigor Index"}
+
+function calc()
+  rvi=RVI(period)
+  rvisignal=RVISIGNAL(period)
+end
+
+
+
+
+

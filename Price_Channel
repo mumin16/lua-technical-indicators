@@ -1,0 +1,17 @@
+SEPARATEWINDOW=false
+INPUTS={ "period,22"}
+BUFFERSNAME={"channelup","channellow","channelmid"}
+BUFFERSCOLOR={ClrGreen,ClrGreen,ClrGreen}
+BUFFERSTYPE={DRAW_LINE,DRAW_LINE,DRAW_LINE}
+DESCRIPTION={"2019 HPK"}
+
+function calc()
+  channelup=PCUP(period)
+  channellow=PCDOWN(period)
+  channelmid=PCMID(period)
+end
+
+
+
+
+

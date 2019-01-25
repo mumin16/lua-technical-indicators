@@ -1,0 +1,15 @@
+SEPARATEWINDOW=true
+INPUTS={ "maxpricechange,300"}
+BUFFERSNAME={"asi"}
+BUFFERSCOLOR={ClrGreen}
+BUFFERSTYPE={DRAW_LINE}
+DESCRIPTION={"Accumulation Swing Index"}
+
+function calc()
+  asi=ASI(maxpricechange)
+end
+
+
+
+
+

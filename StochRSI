@@ -1,0 +1,18 @@
+SEPARATEWINDOW=true
+INPUTS={ "period,14",
+				"smooth,3"}
+BUFFERSNAME={"stochrsi","stochrsiAvg"}
+BUFFERSCOLOR={ClrGreen,ClrRed}
+BUFFERSTYPE={DRAW_LINE,DRAW_LINE}
+LEVELS={0.2,0.8}
+DESCRIPTION={"2019 HPK"}
+
+function calc()
+  stochrsi=STOCHRSI(period)
+  stochrsiAvg=SMA(stochrsi,smooth)
+end
+
+
+
+
+

@@ -1,0 +1,119 @@
+SEPARATEWINDOW=true
+INPUTS={ "InpJawsPeriod,13",
+         "InpJawsShift,8",
+          "InpTeethPeriod,8",
+          "InpTeethShift,5",
+          "InpLipsPeriod,5",
+          "InpLipsShift,3"}
+BUFFERSNAME={"ExtUpperBuffer","ExtLowerBuffer"}
+BUFFERSCOLOR={"ExtUpColorsBuffer","ExtLoColorsBuffer"}
+BUFFERSSHIFT={0,0}
+BUFFERSTYPE={DRAW_COLOREDHISTOGRAM,DRAW_COLOREDHISTOGRAM}
+LEVELS={0}
+DESCRIPTION={"AppliedPrice MEDIAN, MAMethod SMMMA"}
+
+
+         
+         
+function calc()
+BUFFERSSHIFT[1]=InpTeethShift
+BUFFERSSHIFT[2]=InpLipsShift
+
+   
+
+
+local function CalculateSmoothedMA( rates_total, prev_calculated, begin, price,InpMAPeriod)
+local ExtLineBuffer={}
+   
+-- first calculation or number of bars was changed
+
+      limit=InpMAPeriod+begin;
+      -- set empty value for first limit bars
+      for i=1,limit,1 do ExtLineBuffer[i]=0.0; end
+      -- calculate first visible value
+      firstValue=0;
+  for j=1,InpMAPeriod,1 do
+     firstValue= firstValue+price[j];
+  end
+  
+      ExtLineBuffer[limit-1]=firstValue/InpMAPeriod;
+
+-- main loop
+   for i=limit,rates_total,1 do
+      ExtLineBuffer[i]=(ExtLineBuffer[i-1]*(InpMAPeriod-1)+price[i])/InpMAPeriod end
+      
+      return ExtLineBuffer
+--
+end
+
+
+
+   ExtUpperShift=InpJawsShift-InpTeethShift;
+   ExtLowerShift=InpTeethShift-InpLipsShift;
+   
+   
+	ExtJawsBuffer=CalculateSmoothedMA(#MEDIAN,0,1,MEDIAN,InpJawsPeriod)
+	ExtTeethBuffer=CalculateSmoothedMA(#MEDIAN,0,1,MEDIAN,InpTeethPeriod)
+	ExtLipsBuffer=CalculateSmoothedMA(#MEDIAN,0,1,MEDIAN,InpLipsPeriod)
+
+
+
+   ExtUpperShift=InpJawsShift-InpTeethShift;
+   ExtLowerShift=InpTeethShift-InpLipsShift;
+     
+   if(ExtUpperShift>ExtLowerShift) then  shift=ExtUpperShift;
+   else shift=ExtLowerShift; end
+     
+  ExtUpperBuffer={}  ExtUpColorsBuffer={}  ExtLowerBuffer={}  ExtLoColorsBuffer={}
+
+   --last 2 counted bars will be recounted
+   pos=-2;
+   if(pos<shift) then
+       for  i=1,shift,1 do
+         ExtUpperBuffer[i]=0.0;
+         ExtUpColorsBuffer[i]=ClrGreen;
+         ExtLowerBuffer[i]=0.0;
+         ExtLoColorsBuffer[i]=ClrGreen;
+       end
+      pos=shift;
+   end
+ 
+ -- main cycle
+   lower_limit=ExtLowerShift+InpLipsShift+InpLipsPeriod;
+   upper_limit=ExtUpperShift+InpTeethShift+InpTeethPeriod;
+   for i=pos,#CLOSE,1 do
+      if(i>lower_limit) then
+         -- calculate down buffer value
+         dCurr=-math.abs(ExtTeethBuffer[i-ExtLowerShift]-ExtLipsBuffer[i]);
+         dPrev=ExtLowerBuffer[i-1];
+         ExtLowerBuffer[i]=dCurr;
+         -- set down buffer color
+         if(dPrev==dCurr) then ExtLoColorsBuffer[i]=ExtLoColorsBuffer[i-1];
+         else
+            if(dPrev<dCurr) then ExtLoColorsBuffer[i]=ClrRed;
+            else ExtLoColorsBuffer[i]=ClrGreen; end
+         end
+      else
+         ExtLowerBuffer[i]=0.0;
+         ExtLoColorsBuffer[i]=ClrGreen;
+      end
+      if(i>upper_limit) then
+         -- calculate up buffer value
+         dCurr=math.abs(ExtJawsBuffer[i-ExtUpperShift]-ExtTeethBuffer[i]);
+         ExtUpperBuffer[i]=dCurr;
+         dPrev=ExtUpperBuffer[i-1];
+         -- set up buffer color
+         if(dPrev==dCurr) then ExtUpColorsBuffer[i]=ExtUpColorsBuffer[i-1];
+         else
+            if(dPrev<dCurr) then ExtUpColorsBuffer[i]=ClrGreen;
+            else ExtUpColorsBuffer[i]=ClrRed; end
+          end
+      else
+         ExtUpperBuffer[i]=0.0;
+         ExtUpColorsBuffer[i]=ClrGreen;
+      end
+    end
+     
+
+end
+

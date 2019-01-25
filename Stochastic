@@ -1,0 +1,20 @@
+SEPARATEWINDOW=true
+INPUTS={ "Kperiod,5",
+         "Dperiod,3",
+         "Slowing,3",
+          "matype,1"}
+BUFFERSNAME={"stoch","stochsignal"}
+BUFFERSCOLOR={ClrGreen,ClrRed}
+BUFFERSTYPE={DRAW_LINE,DRAW_LINE}
+LEVELS={20,80}
+DESCRIPTION={"matype can be Sma=0 Ema=1 Smma=2 Lwma=3"}
+
+function calc()
+  stoch=STOCHASTIC(Kperiod,Slowing)
+  stochsignal=STOCHASTICSIGNAL(Kperiod,Dperiod,Slowing,matype)
+end
+
+
+
+
+

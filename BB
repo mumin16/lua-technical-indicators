@@ -1,0 +1,19 @@
+SEPARATEWINDOW=false
+INPUTS={ "period,14",
+         "Devition,2",
+          "pricetype,0"}
+BUFFERSNAME={"bandup","bandlow","ma"}
+BUFFERSCOLOR={ClrGreen,ClrGreen,ClrGreen}
+BUFFERSTYPE={DRAW_LINE,DRAW_LINE,DRAW_LINE}
+DESCRIPTION={"Bollinger Bands - pricetype can be CLOSE=0 OPEN=1 HIGH=2 LOW=3 MEDIAN=4 TYPICAL=5 WEIGHTED=6"}
+
+function calc()
+  bandup=BANDSUPPER(pricetype,period,Devition)
+  bandlow=BANDSLOWER(pricetype,period,Devition)
+  ma=SMA(pricetype,period)
+end
+
+
+
+
+

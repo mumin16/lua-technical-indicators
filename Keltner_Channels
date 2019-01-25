@@ -1,0 +1,19 @@
+SEPARATEWINDOW=false
+INPUTS={ "period,20",
+					"multiplier,1",
+          "pricetype,0"}
+BUFFERSNAME={"ma","kup","kdown"}
+BUFFERSCOLOR={ClrGreen,ClrGreen,ClrGreen}
+BUFFERSTYPE={DRAW_LINE,DRAW_LINE,DRAW_LINE}
+DESCRIPTION={"pricetype can be CLOSE=0 OPEN=1 HIGH=2 LOW=3 MEDIAN=4 TYPICAL=5 WEIGHTED=6"}
+
+function calc()
+  kup=KELTNERUP(pricetype,period,multiplier)
+  kdown=KELTNERDOWN(pricetype,period,multiplier)
+  ma=EMA(pricetype,period)
+end
+
+
+
+
+

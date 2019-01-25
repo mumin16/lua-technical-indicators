@@ -1,0 +1,18 @@
+SEPARATEWINDOW=false
+INPUTS={ "period,22",
+				"ATRPeriod,22",
+				"MultipleATR,3"}
+BUFFERSNAME={"exitlong","exitshort"}
+BUFFERSCOLOR={ClrGreen,ClrRed}
+BUFFERSTYPE={DRAW_LINE,DRAW_LINE}
+DESCRIPTION={"2019 HPK"}
+
+function calc()
+  exitlong=CEXITLONG(period,ATRPeriod,MultipleATR)
+  exitshort=CEXITSHORT(period,ATRPeriod,MultipleATR)
+ end
+
+
+
+
+

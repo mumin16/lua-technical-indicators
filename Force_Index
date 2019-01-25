@@ -1,0 +1,18 @@
+SEPARATEWINDOW=true
+INPUTS={ "period,13",
+          "pricetype,0",
+          "matype,0"}
+BUFFERSNAME={"force"}
+BUFFERSCOLOR={ClrGreen}
+BUFFERSTYPE={DRAW_LINE}
+LEVELS={0}
+DESCRIPTION={"pricetype can be CLOSE=0 OPEN=1 HIGH=2 LOW=3 MEDIAN=4 TYPICAL=5 WEIGHTED=6 \n matype can be Sma=0 Ema=1 Smma=2 Lwma=3"}
+
+function calc()
+  force=FORCE(pricetype,period,matype)
+end
+
+
+
+
+

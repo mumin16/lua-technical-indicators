@@ -1,0 +1,18 @@
+SEPARATEWINDOW=true
+INPUTS={ "fastperiod,3",
+         "slowperiod,10",
+         "matype,1"}
+BUFFERSNAME={"chaikin"}
+BUFFERSCOLOR={ClrGreen}
+BUFFERSTYPE={DRAW_LINE}
+LEVELS={0}
+DESCRIPTION={"Chaikin Oscillator - matype can be Sma=0 Ema=1 Smma=2 Lwma=3"}
+
+function calc()
+  chaikin=CHAIKIN(fastperiod,slowperiod,matype)
+end
+
+
+
+
+

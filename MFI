@@ -1,0 +1,16 @@
+SEPARATEWINDOW=true
+INPUTS={ "period,14"}
+BUFFERSNAME={"mfi"}
+BUFFERSCOLOR={ClrGreen}
+BUFFERSTYPE={DRAW_LINE}
+LEVELS={20,80}
+DESCRIPTION={"Money Flow Index"}
+
+function calc()
+  mfi=MFI(period)
+end
+
+
+
+
+
